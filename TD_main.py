@@ -66,7 +66,7 @@ def main():
     identities.sort(key=int)
     #----------------------------------------------------- Args --------------------------------------------------
     use_rotation_features = 0  # 0 mean use landmark to create the tensor  |  1 means use rotation matrix to create the tensor
-    test_mode = 1 # 0 means getting the Euler angles of single input image  |  1 means compute MAE for the given validation set
+    test_mode = 2 # 0: no teest | 1: getting the Euler angles of a single input image  |  2: compute MAE for the given validation set
     print_singular_values = False # (Debug uses) This flag is used to decide printing singular values of the unfolded tensor 
     plot_factor_matrices_dims = True # (Debug uses) ploting columns of factor matrices
     #-------------------------------------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ def main():
     
     # Check if the tensor file exists
     if os.path.exists(tensor_file):
-        start_time = time.time()  # Record start time    
+        start_time = time.time()    
         
         # Load the tensor back from disk
         composition_tensor = tl.tensor(np.load(tensor_file))
@@ -93,35 +93,29 @@ def main():
         print(f"Time taken: {execution_time} seconds")
     else:
         print("Tensor file does not exist.")
+        
         start_time = time.time()  # Record start time   
-        
-        # mat = scipy.io.loadmat('YPR_DataTensor_7FLIN_10x10x8.mat')
-        # # Access the matrix (replace 'A' with the actual variable name)
-        # A = mat['T_5D']  
-        
-        # composition_tensor = tl.tensor(A)
+
         
         # empty_entry is a bool telling that if there is an empty cell in the composition tensor
         composition_tensor, empty_entry = CreateTensor.Compose_Tensor(input_image_path, tensor_shape,
                                                                 yaw_bins, pitch_bins, roll_bins, identities, use_rotation_features)
         # Save the tensor to disk
-        np.save(tensor_file, tl.to_numpy(composition_tensor))  # Convert to NumPy array before saving
+        np.save(tensor_file, tl.to_numpy(composition_tensor))  # save the filled tensor to the disk
         
         end_time = time.time()  # Record end time    
         execution_time = end_time - start_time
         print(f"Tensor saved to {tensor_file}.")
         print(f"Time taken: {execution_time} seconds")
-    
-    # print(composition_tensor)
-    
+   
+
     ################################ Step 2: Decomposing Tensor #####################################
     start_time = time.time()  # Record start time  
     
     core, factors = tucker(composition_tensor, rank=[5, 3, 3, 3, 1404]) # shape of core (R_1, R_2, ... , R_N)
-    # core, factors = tucker(composition_tensor, rank=[28, 10, 10, 8, 36])
     
-    #------------------------------------------------------------------------------
-    #-------------------- compute singular values ---------------------------------
+    #----------------------------------- Monitoring block -----------------------------------
+    #-------------------- compute and print singular values ---------------------------------
     
     if print_singular_values:
     
@@ -143,7 +137,7 @@ def main():
             # Calculate the percentage contribution of each singular value
             percentage_contributions = (singular_values / total_sum) * 100
             
-            # Print contributions
+            # Print energies
             for i, contribution in enumerate(percentage_contributions):
                 print(f"Singular value {i+1} of {matrix_name[mode]}: {singular_values[i]}, Energy: {contribution:.2f}%")
             print("\n")
@@ -151,12 +145,12 @@ def main():
     #------------------------------------------------------------------------------
     #------------------------------------------------------------------------------
     
-    end_time = time.time()  # Record end time    
+    end_time = time.time() 
     execution_time = end_time - start_time
     print("Tensor successfully decomposed.")
     print(f"Time taken: {execution_time} seconds")
         
-    start_time = time.time()  # Record start time  
+    start_time = time.time()  
     # Reconstruct the tensor
     reconstructed_tensor = tucker_to_tensor((core, factors))
     
@@ -184,7 +178,7 @@ def main():
     ''' In each matrix of U^(*) where * ∈ {yaw, pitch, role}, 
          rows are discretized angles and columns are ranks or dimensions
     '''
-    start_time = time.time()  # Record start time  
+    start_time = time.time()  
     
     yaw_params = (factors[1], yaw_bins)
     pitch_params = (factors[2], pitch_bins)
@@ -193,7 +187,7 @@ def main():
     # These optimized values are the trignometric parameters that are optimized so the cosine curve fits very well for each dimension
     optimized_yaw, optimized_pitch, optimized_roll = TD_Trainer.Train(yaw_params, pitch_params, roll_params)
     
-    end_time = time.time()  # Record end time    
+    end_time = time.time()     
     execution_time = end_time - start_time
     print(f"Training successfully completed!")
     print(f"Time taken: {execution_time} seconds")
@@ -201,16 +195,11 @@ def main():
     np.savez('Factor_Matrices.npz', U_yaw=factors[1], U_pitch=factors[2], U_roll=factors[3], U_id=factors[0])
     np.savez('Trained_data.npz', optimized_yaw=optimized_yaw, optimized_pitch=optimized_pitch, optimized_roll=optimized_roll, CoreTensor=core_tensor, W=W)
     
-    # Load the matrices and tensor
-    # loaded_data = np.load('Trained_data.npz')
-    # optimized_yaw = loaded_data['optimized_yaw']
-    # optimized_pitch = loaded_data['optimized_pitch']
-    # optimized_roll = loaded_data['optimized_roll']
-    # W = loaded_data['CoreTensor']
     
-    #=====================================================================================================
+    #=========================================================================================================
+    #---------------------------------------- Monitoring block------------------------------------------------
     # ## ploting a column of any factor matrix using optimized cosine params for yaw, pitch and roll rotations
-    #=====================================================================================================
+    #=========================================================================================================
     
     # Function definition
     def f(w, a, b, c, d):
@@ -295,29 +284,21 @@ def main():
     face_mesh = mp_face_mesh.FaceMesh(static_image_mode=True, max_num_faces=1, min_detection_confidence=0.5, min_tracking_confidence=0.5)    
     
     
-    if test_mode == 0:
+    if test_mode == 1:
         """ 
          Testing single input image to get Euler angles
         """
         
         # existed in training set
-        # singe_test_path = 'testSamples/frame_00479_rgb.png'
-        # singe_test_path = 'D:/datasets/BIWI/faces_0/10/frame_00486_rgb.png'
-        # singe_test_path = 'Sample_09_119(P1_Y33_R-1).jpg'
-        # singe_test_path = "testSamples/ID257_(0_30_0).png"
-        # singe_test_path = "testSamples/ID257_(10_20_-30).png"
+        
         singe_test_path = "testSamples/ID1_(30_20_-10).png"
         singe_test_path = "testSamples/frame_00350_rgb.png"    
         val_set_cnt = 1
-        # Not existed in training set
-        # test_path = 'testSamples/frame_00362_rgb.png'
          
         x = CreateTensor.get_feature_vector(face_mesh, singe_test_path, normalized=True) 
         
         u_id_shape = factors[0][1].size
         
-        # print Euler angles of the test image using mediapipe
-        # EulerAngles_mediapipe.print_EulerAngles_mediapipe(face_mesh, test_path)
         
         # existed in training set
         test_anonotationFile_path = 'D:/datasets/BIWI/db_annotations/10/frame_00479_pose.bin'
@@ -353,7 +334,7 @@ def main():
         # plt.title('Objective function value vs w_y')
         # plt.show()
     
-    elif test_mode == 1:
+    elif test_mode == 2:
         """ 
          Computing MAE for the given validation set
         """
