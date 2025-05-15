@@ -14,6 +14,7 @@ import mediapipe as mp
 import numpy as np
 import tensorly as tl
 from utils import IntrinsicRotation as IR
+from utils import FeatureExtractor as FE
 
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -137,7 +138,7 @@ def Compose_Tensor_with_pose_file(input_pose_data_path, input_image_path, tensor
                                 # closest_file[0:11] is the pure file name
                                 image_full_path = find_corresonding_image(image_path, closest_file[0:11]) 
                                 
-                                features_vector = get_feature_vector(face_mesh, image_full_path[0], normalized=True)
+                                features_vector = FE.get_feature_vector(face_mesh, image_full_path[0], normalized=True)
                         
                                 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
                     # Store the closest file name in the corresponding index of the tensor
@@ -178,13 +179,13 @@ def Compose_Tensor(input_image_path, tensor_shape, yaw_discretized,
                     # get the landmark of (0,0,0) for the given identity as the base landmark
                     if base_landmarks[id_idx] is None:
                         base_img_path = os.path.join(image_path, f'ID{identity}_(0_0_0).png')
-                        landmarks_tensor = get_feature_vector(face_mesh, base_img_path, normalized=True)
+                        landmarks_tensor = FE.get_feature_vector(face_mesh, base_img_path, normalized=True)
                         base_landmarks[id_idx]  = torch.tensor(landmarks_tensor).reshape(468, 3)         
                     
                     # If we use landmark detector to extract features
                     if(use_rotation_features == 0):                    
                         cur_img_path = os.path.join(image_path, f'ID{identity}_({yaw_val}_{pitch_val}_{roll_val}).png')
-                        features_vector = get_feature_vector(face_mesh, cur_img_path, normalized=True)
+                        features_vector = FE.get_feature_vector(face_mesh, cur_img_path, normalized=True)
                                                 
                         # Check if any landmark is detected, if all zero means not detected
                         all_zero = torch.all(features_vector == 0)

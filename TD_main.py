@@ -26,7 +26,9 @@ import CreateTensor
 import TD_Trainer
 import TD_Tester
 from Tester import w_y_values, w_p_values, w_r_values, u_id_values, objective_values
+from utils import FeatureExtractor as FE
 import EulerAngles_mediapipe
+
 
 # packages to work with Tucker decomposition
 import tensorly as tl
@@ -295,7 +297,7 @@ def main():
         singe_test_path = "testSamples/frame_00350_rgb.png"    
         val_set_cnt = 1
          
-        x = CreateTensor.get_feature_vector(face_mesh, singe_test_path, normalized=True) 
+        x = FE.get_feature_vector(face_mesh, singe_test_path, normalized=True) 
         
         u_id_shape = factors[0][1].size
         
@@ -363,7 +365,7 @@ def main():
             random_image = random.choice(image_files)
             random_image_path = os.path.join(test_path, random_image)  
              
-            x = CreateTensor.get_feature_vector(face_mesh, random_image_path, normalized=True) 
+            x = FE.get_feature_vector(face_mesh, random_image_path, normalized=True) 
             
             # Create the expected pattern to match the part with the numbers, focusing on the ID and parentheses with values
             pattern = rf'ID{curr_folder}_\((-?\d+)_(-?\d+)_(-?\d+)\)'
@@ -386,7 +388,7 @@ def main():
             #optimized_yaw[0:3,:] only the first 3 dims have noticable 
             est_w_y, est_w_p, est_w_r, est_u_id = TD_Tester.Test(W, x, u_id_shape, optimized_yaw[0:3,:], 
                                                               optimized_pitch[0:3,:], optimized_roll[0:3,:], 
-                                                              None, None, None, None) 
+                                                              None, None, None, None) # the params that are None are placeholder for debug use
             pred_euler_angles.append((round(est_w_y, 3) , round(est_w_p,3) , round(est_w_r,3) ))
         
         end_time = time.time()
