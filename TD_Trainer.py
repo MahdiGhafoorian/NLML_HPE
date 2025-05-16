@@ -6,30 +6,30 @@ Code to optimize paramteres of Training Trignometric functions
 
 @author: Mahdi
 """
+
+# basic required packages
 import torch
-import tensorly as tl
-from tensorly import unfold
-from tensorly.decomposition import tucker
-from tensorly import tucker_to_tensor
-
 import numpy as np
-from scipy.optimize import minimize
-from scipy.optimize import curve_fit
+# from functools import partial
+# import matplotlib.pyplot as plt
 
-from functools import partial
-
-# for non-uniform Furier transform 
+# required packages for non-uniform Furier transform 
 from scipy.interpolate import interp1d
 from scipy.fft import fft, fftfreq
 
-import matplotlib.pyplot as plt
+# optimization packages
+from scipy.optimize import minimize
+from scipy.optimize import curve_fit
 
-# Define the function model
-# a_j = Amplitude
-# b_j = Frequency
-# c_j = Phase shift
-# d_j = Vertical shift
+
 def func(w_i, a_j, b_j, c_j, d_j):
+    ''' 
+        Defining the trignometric model
+        a_j = Amplitude
+        b_j = Frequency
+        c_j = Phase shift
+        d_j = Vertical shift    
+    '''
     # radian = (w_i * 3.14) / 180
     return a_j * np.cos(b_j * w_i + c_j) + d_j
 
@@ -62,29 +62,11 @@ def objective_grad(params, U_j, w):
 
     return np.array([grad_a, grad_b, grad_c, grad_d])
 
-# Optimization for each j (dimension) across all i (angles)
-def optimize_for_matrix(U_matrix, w_vector):
-    n_rows, n_cols = U_matrix.shape
-    optimized_params = np.zeros((n_cols, 4))  # Store a_j, b_j, c_j, d_j for each j
-
-    for j in range(n_cols):
-        U_j = U_matrix[:, j]  # Get the column j (for all i)
-
-        # Initial guess for parameters [a_j, b_j, c_j, d_j]
-        initial_guess = [1.0, 1.0, 0.0, 0.0]
-
-        # Optimize parameters for this column j across all i
-        result = minimize(objective, initial_guess, args=(U_j, w_vector), method='BFGS')
-        
-        # Store optimized parameters
-        optimized_params[j, :] = result.x
- 
-    return optimized_params
 
 def gradient_wrapper(params, U_j, w):
     return objective_grad(params, U_j, w)
 
-#do the optimization using computed gradients
+# optimizing sinusoidal params using computed gradients
 def optimize_for_matrix_using_grads(U_matrix, w_vector, initial_guesses): 
     # w_vector is vector of angles
     n_rows, n_cols = U_matrix.shape
@@ -93,8 +75,7 @@ def optimize_for_matrix_using_grads(U_matrix, w_vector, initial_guesses):
     for j in range(n_cols):
         U_j = U_matrix[:, j]  # Get the column j (for all i)
 
-        # Initial guess for parameters [a_j, b_j, c_j, d_j] correspond to alpha, beta, gama, phi
-        # initial_guess = [2, 0.5, 0.0, 0.0] 
+        # Initial guess for parameters [a_j, b_j, c_j, d_j] correspond to alpha, beta, gama, phi        
         initial_guess = initial_guesses[j]
         # Optimize parameters for this column j across all i
         result = minimize(
@@ -110,66 +91,6 @@ def optimize_for_matrix_using_grads(U_matrix, w_vector, initial_guesses):
         optimized_params[j, :] = result.x
  
     return optimized_params
-
-#do the optimization using curve fit
-def optimize_for_matrix_using_curve_fit(U_matrix, w_vector, initial_guesses): 
-    # w_vector is vector of angles    
-    n_rows, n_cols = U_matrix.shape
-    optimized_params = np.zeros((n_cols, 4))  # Store a_j, b_j, c_j, d_j for each j
-
-    for j in range(n_cols):
-        U_j = U_matrix[:, j]  # Get the column j (for all i)
-
-        # Initial guess for parameters [a_j, b_j, c_j, d_j] correspond to alpha, beta, gama, phi
-        initial_guess = initial_guesses[j]
-        # Use curve_fit to find the best parameters for this column j across all i
-        popt, _ = curve_fit(func, np.radians(w_vector), U_j, p0=initial_guess)
-           
-        # Store optimized parameters
-        optimized_params[j, :] = popt
- 
-    return optimized_params
-
-def cosine_func(w, a, b, c, d):
-    return a * torch.cos(b * w + c) + d
-
-#do the optimization using computed gradients
-def optimize_for_matrix_using_torch(U_matrix, w_vector, initial_guesses): 
-    # w_vector is vector of angles
-    n_rows, n_cols = U_matrix.shape
-    optimized_params = np.zeros((n_cols, 4))  # Store a_j, b_j, c_j, d_j for each j 
-
-    w_tensor = torch.tensor(np.radians(w_vector), dtype=torch.float32)
-
-    for j in range(n_cols):
-        U_j = torch.tensor(U_matrix[:, j], dtype=torch.float32) # Get the column j (for all i)
-
-        # Initial guess for parameters [a_j, b_j, c_j, d_j] correspond to alpha, beta, gama, phi
-        initial_guess = initial_guesses[j]
-        # Initialize parameters as tensors with gradients
-        a = torch.tensor(initial_guess[0], requires_grad=True)
-        b = torch.tensor(initial_guess[1], requires_grad=True)
-        c = torch.tensor(initial_guess[2], requires_grad=True)
-        d = torch.tensor(initial_guess[3], requires_grad=True)
-        
-        # Define the optimizer with L-BFGS
-        optimizer = torch.optim.LBFGS([a, b, c, d], lr=0.1, max_iter=100)
-        
-        # Define the closure function for the optimizer
-        def closure():
-            optimizer.zero_grad()
-            y_pred = cosine_func(w_tensor, a, b, c, d)
-            loss = torch.sum((U_j - y_pred) ** 2)
-            loss.backward()
-            return loss
-        
-        # Perform the optimization
-        optimizer.step(closure)
-
-        # Store optimized parameters for this column
-        optimized_params[j, :] = np.array([a.item(), b.item(), c.item(), d.item()])
- 
-    return optimized_params  
 
 
 def est_params_by_nonUniform_Fourier(U, w):
@@ -321,13 +242,14 @@ def Train(yaw_params, pitch_params, roll_params):
                                                                                         pitch_params, 
                                                                                         roll_params)    
     
-    # initial guess using Taylor Series
+    # initial guess using Taylor Series (another approach used for comparison)
     initial_guess_yaw2, initial_guess_pitch2, initial_guess_roll2 = estimate_init_Taylor_Series(yaw_params, 
                                                                                         pitch_params, 
                                                                                         roll_params)
     
     #=====================================================================================================
-    # ## ploting a column of any factor matrix without optimizing cosine params 
+    #                                      --- results inspction block ---
+    # ## ploting a column of any factor matrix without optimizing cosine params  
     #=====================================================================================================
     # Function definition
     # def func_cosine(w, a, b, c, d):
@@ -409,6 +331,8 @@ def Train(yaw_params, pitch_params, roll_params):
     print("\nOptimal parameters for roll:")
     print(optimized_params_roll)
     
+    # ------------------ optimizing sinusoidal params using curve_fit -----------------------------------
+    
     # from scipy.optimize import curve_fit
     
     # n_cols = U_yaw.shape[1]
@@ -421,6 +345,7 @@ def Train(yaw_params, pitch_params, roll_params):
     #     optimized_params[col, :] = params
     #     a_opt, b_opt, c_opt, d_opt = params
     #     print(f"Dimension {col+1}: a={a_opt}, b={b_opt}, c={c_opt}, d={d_opt}")
+    # ---------------------------------------------------------------------------------------------------
     
     
     return optimized_params_yaw, optimized_params_pitch, optimized_params_roll

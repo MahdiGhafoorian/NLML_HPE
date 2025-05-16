@@ -95,7 +95,7 @@ def Compose_Tensor_with_pose_file(input_pose_data_path, input_image_path, tensor
     face_mesh = mp_face_mesh.FaceMesh(static_image_mode=True, max_num_faces=1, min_detection_confidence=0.5, min_tracking_confidence=0.5)    
     empty_entry = False
     
-    """Find closest files based on discretized yaw, pitch, roll values."""
+    """Finding closest files based on discretized yaw, pitch, roll values."""
     # Discretization of yaw, pitch, and roll based on tensor shape
     # yaw_discretized, yaw_discretized_spacing = discretize_interval(-1*yaw_range, yaw_range,tensor_shape[0])
     # pitch_discretized, pitch_discretized_spacing = discretize_interval(-1*pitch_range, pitch_range,tensor_shape[1])
