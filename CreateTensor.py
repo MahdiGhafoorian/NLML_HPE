@@ -4,7 +4,7 @@ Created on Mon Aug 12 09:37:51 2024
 
 Code to Create Tensor for Manifold Learning
 
-@author: Mahdi
+@author: Mahdi Ghafourian
 """
 
 import os
@@ -13,8 +13,8 @@ import torch
 import mediapipe as mp
 import numpy as np
 import tensorly as tl
-from utils import IntrinsicRotation as IR
-from utils import FeatureExtractor as FE
+from helpers import IntrinsicRotation as IR
+from helpers import FeatureExtractor as FE
 
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")

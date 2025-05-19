@@ -4,7 +4,7 @@ Created on Fri Aug  9 11:51:03 2024
 
 main program of Tensor decomposition for 3D head pose estimation
 
-@author: Mahdi
+@author: Mahdi Ghafourian
 """
 
 
@@ -20,13 +20,14 @@ import re
 import matplotlib.pyplot as plt
 import warnings
 import scipy.io
+import argparse
 
 # our modules
 import CreateTensor
 import TD_Trainer
 import TD_Tester
 from Tester import w_y_values, w_p_values, w_r_values, u_id_values, objective_values
-from utils import FeatureExtractor as FE
+from helpers import FeatureExtractor as FE
 import EulerAngles_mediapipe
 
 
@@ -39,6 +40,12 @@ from numpy.linalg import svd
 
 
 def main():
+    
+    parser = argparse.ArgumentParser(description="TCP client to send a message to a server.")
+    parser.add_argument('host', type=str, help="The server's host IP address.")
+    parser.add_argument('port', type=int, help="The server's port number.")
+    parser.add_argument('showStream', type=int, help="The flag to show online stream.")
+    args = parser.parse_args()
 
     warnings.filterwarnings("ignore")    
     
@@ -278,7 +285,7 @@ def main():
     # print("Resulting vector shape:", result.shape)
     # print("Resulting vector:", result)
     
-    ################################ Step 3: Test #####################################
+    ################################ Step 3: Validation #####################################
     
     start_time = time.time()
     
@@ -286,57 +293,7 @@ def main():
     face_mesh = mp_face_mesh.FaceMesh(static_image_mode=True, max_num_faces=1, min_detection_confidence=0.5, min_tracking_confidence=0.5)    
     
     
-    if test_mode == 1:
-        """ 
-         Testing single input image to get Euler angles
-        """
-        
-        # existed in training set
-        
-        singe_test_path = "testSamples/ID1_(30_20_-10).png"
-        singe_test_path = "testSamples/frame_00350_rgb.png"    
-        val_set_cnt = 1
-         
-        x = FE.get_feature_vector(face_mesh, singe_test_path, normalized=True) 
-        
-        u_id_shape = factors[0][1].size
-        
-        
-        # existed in training set
-        test_anonotationFile_path = 'D:/datasets/BIWI/db_annotations/10/frame_00479_pose.bin'
-        # test_anonotationFile_path = 'D:/datasets/BIWI/db_annotations/10/frame_00486_pose.bin'
-        
-        # Not existed in training set
-        # test_anonotationFile_path = 'E:/datasets/BIWI/db_annotations/12/frame_00362_pose.bin'
-        
-        true_yaw, true_pitch, true_roll = CreateTensor.read_head_pose_values(test_anonotationFile_path)
-        
-        # true_yaw, true_pitch, true_roll = np.radians(true_yaw), np.radians(true_pitch), np.radians(true_roll)
-        
-        print(f'True angles: w_y:{true_yaw} w_p:{true_pitch} w_r:{true_roll}')
-        #W[:, :3, :3, :3, :] If after decomposition, the ranks of factor matrices of 1,2, and 3 are huigher than 3, use this code
-        #optimized_yaw[0:3,:] only the first 3 dims have noticable 
-        est_w_y, est_w_p, est_w_r, est_u_id = TD_Tester.Test(W, x, u_id_shape, optimized_yaw[0:3,:], 
-                                                          optimized_pitch[0:3,:], optimized_roll[0:3,:], 
-                                                          u_id=factors[0][256], # These extra params are for the sake of debug.
-                                                          f_y=factors[1][6],  # If the test sample is within the train set,
-                                                          f_p=factors[2][6], # we can provide the corresponding entry of the
-                                                          f_r=factors[3][0]) # test in factor matrcies except those that we
-                                                                              # want to test by ploting the objective function.
-                                                          
-        print('Estimated yaw in degree = ', est_w_y)
-        print('Estimated pitch in degree = ', est_w_p)
-        print('Estimated roll in degree = ', est_w_r) 
-                                                     
-        end_time = time.time()
-        # Plot the captured w_y values and the corresponding objective values
-        # plt.plot(w_y_values, objective_values, marker='o')
-        # plt.xlabel('w_y')
-        # plt.ylabel('Objective function value')
-        # plt.title('Objective function value vs w_y')
-        # plt.show()
-    
-    elif test_mode == 2:
+    if test_mode == 2:
         """ 
          Computing MAE for the given validation set
         """
@@ -384,8 +341,8 @@ def main():
             # true_yaw, true_pitch, true_roll = np.radians(true_yaw), np.radians(true_pitch), np.radians(true_roll)
             
             # print(f'True angles: w_y:{true_yaw} w_p:{true_pitch} w_r:{true_roll}')
-            #W[:, :3, :3, :3, :] If after decomposition, the ranks of factor matrices of 1,2, and 3 are huigher than 3, use this code
-            #optimized_yaw[0:3,:] only the first 3 dims have noticable 
+            #W[:, :3, :3, :3, :] If after decomposition, the ranks of factor matrices of 1,2, and 3 are higher than 3, use this code
+            #optimized_yaw[0:3,:] mean only the first 3 dims have noticeable energy
             est_w_y, est_w_p, est_w_r, est_u_id = TD_Tester.Test(W, x, u_id_shape, optimized_yaw[0:3,:], 
                                                               optimized_pitch[0:3,:], optimized_roll[0:3,:], 
                                                               None, None, None, None) # the params that are None are placeholder for debug use
