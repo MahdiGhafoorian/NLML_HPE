@@ -26,7 +26,7 @@ import argparse
 import CreateTensor
 import TD_Trainer
 import TD_Tester
-from Tester import w_y_values, w_p_values, w_r_values, u_id_values, objective_values
+from TD_Tester import w_y_values, w_p_values, w_r_values, u_id_values, objective_values
 from helpers import FeatureExtractor as FE
 import EulerAngles_mediapipe
 
@@ -41,11 +41,11 @@ from numpy.linalg import svd
 
 def main():
     
-    parser = argparse.ArgumentParser(description="TCP client to send a message to a server.")
-    parser.add_argument('host', type=str, help="The server's host IP address.")
-    parser.add_argument('port', type=int, help="The server's port number.")
-    parser.add_argument('showStream', type=int, help="The flag to show online stream.")
-    args = parser.parse_args()
+    # parser = argparse.ArgumentParser(description="TCP client to send a message to a server.")
+    # parser.add_argument('host', type=str, help="The server's host IP address.")
+    # parser.add_argument('port', type=int, help="The server's port number.")
+    # parser.add_argument('showStream', type=int, help="The flag to show online stream.")
+    # args = parser.parse_args()
 
     warnings.filterwarnings("ignore")    
     
@@ -75,7 +75,7 @@ def main():
     identities.sort(key=int)
     #----------------------------------------------------- Args --------------------------------------------------
     use_rotation_features = 0  # 0 mean use landmark to create the tensor  |  1 means use rotation matrix to create the tensor
-    test_mode = 2 # 0: no teest | 1: getting the Euler angles of a single input image  |  2: compute MAE for the given validation set
+    validation = True # True denotes performing the validation 
     print_singular_values = False # (Debug uses) This flag is used to decide printing singular values of the unfolded tensor 
     plot_factor_matrices_dims = True # (Debug uses) ploting columns of factor matrices
     #-------------------------------------------------------------------------------------------------------------
@@ -286,17 +286,16 @@ def main():
     # print("Resulting vector:", result)
     
     ################################ Step 3: Validation #####################################
-    
-    start_time = time.time()
-    
-    mp_face_mesh = mp.solutions.face_mesh
-    face_mesh = mp_face_mesh.FaceMesh(static_image_mode=True, max_num_faces=1, min_detection_confidence=0.5, min_tracking_confidence=0.5)    
-    
-    
-    if test_mode == 2:
+        
+    if validation:
         """ 
          Computing MAE for the given validation set
-        """
+        """        
+        start_time = time.time()
+        
+        mp_face_mesh = mp.solutions.face_mesh
+        face_mesh = mp_face_mesh.FaceMesh(static_image_mode=True, max_num_faces=1, min_detection_confidence=0.5, min_tracking_confidence=0.5)    
+                
         true_euler_angles = []
         pred_euler_angles = []
         
@@ -304,13 +303,15 @@ def main():
         val_set_cnt = 60
         
         u_id_shape = factors[0][1].size
+        # val_set_path = "3D_DB_(50_40_30)_valset_mixedExpressions(60_Subjects)" 
+        folders = [name for name in os.listdir(val_set_path) if os.path.isdir(os.path.join(val_set_path, name))]
         
         for i in range(val_set_cnt):
             
             if i % 20 == 0:
                 print(f'{i} data are valiadted')
                 
-            curr_folder = str(300 - val_set_cnt + (i+1) )
+            curr_folder = folders[i] # str(300 - val_set_cnt + (i+1) )
             
             test_path = os.path.join(val_set_path, curr_folder)  
             
