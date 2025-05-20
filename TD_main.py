@@ -346,7 +346,12 @@ def main():
             #optimized_yaw[0:3,:] mean only the first 3 dims have noticeable energy
             est_w_y, est_w_p, est_w_r, est_u_id = TD_Tester.Test(W, x, u_id_shape, optimized_yaw[0:3,:], 
                                                               optimized_pitch[0:3,:], optimized_roll[0:3,:], 
-                                                              None, None, None, None) # the params that are None are placeholder for debug use
+                                                              None, None, None, None) # These extra params are for the sake of debug.
+                                                                                      # f_y=factors[1][6],  # If the test sample is within the train set,
+                                                                                      # f_p=factors[2][6], # we can provide the corresponding entry of the
+                                                                                      # f_r=factors[3][0]) # test in factor matrcies except those that we
+                                                                                      # want to test by ploting the objective function.
+                                                                                      
             pred_euler_angles.append((round(est_w_y, 3) , round(est_w_p,3) , round(est_w_r,3) ))
         
         end_time = time.time()
