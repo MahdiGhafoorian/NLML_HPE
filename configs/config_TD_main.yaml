@@ -1,0 +1,32 @@
+tensor_shape:
+  I_identity: 1620   # number of identities
+  I_yaw: 11          # number of yaw bins
+  I_pitch: 9         # number of pitch bins
+  I_roll: 7          # number of roll bins
+  I_features: 1404   # number of flattened features
+
+tensor_decom_ranks:
+  R_identity: 5      # rank of identities after decomposition
+  R_yaw: 3           # rank of yaw after decomposition 
+  R_pitch: 3         # rank of pitch after decomposition
+  R_roll: 3          # rank of roll after decomposition
+  R_features: 1404   # rank of flattened features after decomposition
+
+yaw_bins:            # yaw bins with the interval between them
+  min_bin: -50
+  max_bin:  51
+  interval: 10
+
+pitch_bins:          # pitch bins with the interval between them
+  min_bin: -40
+  max_bin:  41
+  interval: 10
+
+roll_bins:           # roll bins with the interval between them
+  min_bin: -30
+  max_bin:  31
+  interval: 10
+
+
+train_set_path: "E:/Mahdi/Databases/3D_DB_(50_40_30)_trainset_singleExpressions_240_Subjects_BIWI_3rd_rotation_convention"
+validation_set_path:  "3D_DB_(50_40_30)_valset_mixedExpressions(60_Subjects)" 

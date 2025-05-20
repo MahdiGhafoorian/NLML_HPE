@@ -4,7 +4,7 @@ Created on Tue Aug 20 12:35:28 2024
 
 Code to optimize paramteres of Training Trignometric functions
 
-@author: Mahdi
+@author: Mahdi Ghafourian
 """
 
 # basic required packages

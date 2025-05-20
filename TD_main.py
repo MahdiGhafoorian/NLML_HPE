@@ -21,6 +21,7 @@ import matplotlib.pyplot as plt
 import warnings
 import scipy.io
 import argparse
+import yaml
 
 # our modules
 import CreateTensor
@@ -39,43 +40,92 @@ from tensorly import tucker_to_tensor
 from numpy.linalg import svd
 
 
-def main():
+def load_config(path):
+    with open(path, 'r') as f:
+        return yaml.safe_load(f)
     
-    # parser = argparse.ArgumentParser(description="TCP client to send a message to a server.")
-    # parser.add_argument('host', type=str, help="The server's host IP address.")
-    # parser.add_argument('port', type=int, help="The server's port number.")
-    # parser.add_argument('showStream', type=int, help="The flag to show online stream.")
-    # args = parser.parse_args()
+    
 
+def main():
     warnings.filterwarnings("ignore")    
+    
+    ################################ Step 0: Initialization ##########################################
+    
+    parser = argparse.ArgumentParser()
+    # parser.add_argument('--config', type=str, required=True)
+    parser.add_argument('--use_rotation_features', type=str)  #  0 mean use landmark to create the tensor  |  1 means use rotation matrix to create the tensor
+    parser.add_argument('--perform_validation', type=bool)    # default: True
+    
+    args = parser.parse_args()
+    
+    # Load config
+    config = load_config("configs/config_TD_main.yaml")
+    
+    I_1 = config["tensor_shape"]["I_identity"]
+    I_2 = config["tensor_shape"]["I_yaw"]
+    I_3 = config["tensor_shape"]["I_pitch"]
+    I_4 = config["tensor_shape"]["I_roll"]
+    I_5 = config["tensor_shape"]["I_features"]
+    
+    R_1 = config["tensor_decom_ranks"]["R_identity"]
+    R_2 = config["tensor_decom_ranks"]["R_yaw"]
+    R_3 = config["tensor_decom_ranks"]["R_pitch"]
+    R_4 = config["tensor_decom_ranks"]["R_roll"]
+    R_5 = config["tensor_decom_ranks"]["R_features"]
+    
+    
+    yaw_min_bin = config["yaw_bins"]["min_bin"]
+    yaw_max_bin = config["yaw_bins"]["max_bin"]
+    yaw_interval = config["yaw_bins"]["interval"]
+    
+    pitch_min_bin = config["pitch_bins"]["min_bin"]
+    pitch_max_bin = config["pitch_bins"]["max_bin"]
+    pitch_interval = config["pitch_bins"]["interval"]
+    
+    roll_min_bin = config["roll_bins"]["min_bin"]
+    roll_max_bin = config["roll_bins"]["max_bin"]
+    roll_interval = config["roll_bins"]["interval"]
+    
+
+    
+    train_set_path = config["train_set_path"]
+    val_set_path =  config["validation_set_path"]
+
+    use_rotation_features = args.use_rotation_features
+    validation = args.perform_validation
     
     # device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     
     ################################ Step 1: Creating Tensor ##########################################
     
-    tensor_shape = (300, 11, 9, 7, 1404)   # shape of Tensor (I_1, I_2, ... , I_N)
-    tensor_shape = (5, 31, 27, 25, 1404)   # shape of Tensor (I_1, I_2, ... , I_N)
-    tensor_shape = (1620, 11, 9, 7, 1404)   # shape of Tensor (I_1, I_2, ... , I_N)
-    tensor_shape = (240, 11, 9, 7, 1404)   # shape of Tensor (I_1, I_2, ... , I_N)
+    # tensor_shape = (300, 11, 9, 7, 1404)   # shape of Tensor (I_1, I_2, ... , I_N)
+    # tensor_shape = (5, 31, 27, 25, 1404)   # shape of Tensor (I_1, I_2, ... , I_N)
+    # tensor_shape = (1620, 11, 9, 7, 1404)   # shape of Tensor (I_1, I_2, ... , I_N)
+    # tensor_shape = (240, 11, 9, 7, 1404)   # shape of Tensor (I_1, I_2, ... , I_N)
+    tensor_shape = (I_1, I_2, I_3, I_4, I_5)   # shape of Tensor (I_1, I_2, ... , I_N)
     
     
-    yaw_bins = np.arange(-50, 51, 10)
-    pitch_bins = np.arange(-40, 41, 10)
-    roll_bins = np.arange(-30, 31, 10)
+    # yaw_bins = np.arange(-50, 51, 10)
+    # pitch_bins = np.arange(-40, 41, 10)
+    # roll_bins = np.arange(-30, 31, 10)
+    
+    yaw_bins = np.arange(yaw_min_bin, yaw_max_bin, yaw_interval)
+    pitch_bins = np.arange(pitch_min_bin, pitch_max_bin, pitch_interval)
+    roll_bins = np.arange(roll_min_bin, roll_max_bin, roll_interval)
     
 
-    input_image_path = "D:/datasets/BIWI/faces_0"
-    input_image_path = "3D_DB_(50_40_30)_trainset_singleExpressions_1620_Subjects"
-    # path to our generated dataset
-    input_image_path = "E:/Mahdi/Databases/3D_DB_(50_40_30)_trainset_singleExpressions_240_Subjects_BIWI_3rd_rotation_convention"
+    # train_set_path = "D:/datasets/BIWI/faces_0"
+    # train_set_path = "3D_DB_(50_40_30)_trainset_singleExpressions_1620_Subjects"
+    # # path to our generated dataset
+    # train_set_path = "E:/Mahdi/Databases/3D_DB_(50_40_30)_trainset_singleExpressions_240_Subjects_BIWI_3rd_rotation_convention"
     
     
     # Idenitites that we generated image for using facescape 3D models
-    identities = [name for name in os.listdir(input_image_path) if os.path.isdir(os.path.join(input_image_path, name))]
+    identities = [name for name in os.listdir(train_set_path) if os.path.isdir(os.path.join(train_set_path, name))]
     identities.sort(key=int)
     #----------------------------------------------------- Args --------------------------------------------------
-    use_rotation_features = 0  # 0 mean use landmark to create the tensor  |  1 means use rotation matrix to create the tensor
-    validation = True # True denotes performing the validation 
+    # use_rotation_features = 0  # 0 mean use landmark to create the tensor  |  1 means use rotation matrix to create the tensor
+    # validation = True # True denotes performing the validation 
     print_singular_values = False # (Debug uses) This flag is used to decide printing singular values of the unfolded tensor 
     plot_factor_matrices_dims = True # (Debug uses) ploting columns of factor matrices
     #-------------------------------------------------------------------------------------------------------------
@@ -83,10 +133,11 @@ def main():
     if use_rotation_features == 0:
         # tensor_file = 'train_tensor_landmarks_normalized_240Subjects_mixedEXP.npy'
         # tensor_file = 'train_tensor_landmarks_normalized_1620Subjects.npy'
-        tensor_file = 'train_tensor_landmarks_normalized_240Subjects_BIWI_Convention_3.npy'
+        "configs/config_TD_main.yaml"
+        tensor_file = 'data/train_tensor_landmarks_normalized_240Subjects_BIWI_Convention_3.npy'
         # tensor_file = 'train_tensor_landmarks_normalized_240Subjects_mixedEXP.npy'
     else:
-        tensor_file = 'train_tensor_rotations_300Subjects.npy'
+        tensor_file = 'data/train_tensor_rotations_300Subjects.npy'
         # tensor_file = 'train_tensor_rotations_sase_mini.npy'
     
     # Check if the tensor file exists
@@ -107,7 +158,7 @@ def main():
 
         
         # empty_entry is a bool telling that if there is an empty cell in the composition tensor
-        composition_tensor, empty_entry = CreateTensor.Compose_Tensor(input_image_path, tensor_shape,
+        composition_tensor, empty_entry = CreateTensor.Compose_Tensor(train_set_path, tensor_shape,
                                                                 yaw_bins, pitch_bins, roll_bins, identities, use_rotation_features)
         # Save the tensor to disk
         np.save(tensor_file, tl.to_numpy(composition_tensor))  # save the filled tensor to the disk
@@ -121,10 +172,11 @@ def main():
     ################################ Step 2: Decomposing Tensor #####################################
     start_time = time.time()  # Record start time  
     
-    core, factors = tucker(composition_tensor, rank=[5, 3, 3, 3, 1404]) # shape of core (R_1, R_2, ... , R_N)
+    # core, factors = tucker(composition_tensor, rank=[5, 3, 3, 3, 1404]) # shape of core (R_1, R_2, ... , R_N)
+    core, factors = tucker(composition_tensor, rank=[R_1, R_2, R_3, R_4, R_5]) # shape of core (R_1, R_2, ... , R_N)    
     
-    #----------------------------------- Monitoring block -----------------------------------
-    #-------------------- compute and print singular values ---------------------------------
+    #----------------------------------- data inspection block -----------------------------------
+    #------------------------- compute and print singular values ---------------------------------
     
     if print_singular_values:
     
@@ -299,12 +351,12 @@ def main():
         true_euler_angles = []
         pred_euler_angles = []
         
-        val_set_path = "3D_DB_(50_40_30)_valset_mixedExpressions(60_Subjects)" 
-        val_set_cnt = 60
+        val_set_path = "3D_DB_(50_40_30)_valset_mixedExpressions(60_Subjects)"         
         
         u_id_shape = factors[0][1].size
         # val_set_path = "3D_DB_(50_40_30)_valset_mixedExpressions(60_Subjects)" 
         folders = [name for name in os.listdir(val_set_path) if os.path.isdir(os.path.join(val_set_path, name))]
+        val_set_cnt = len(folders)
         
         for i in range(val_set_cnt):
             
@@ -323,7 +375,7 @@ def main():
             random_image = random.choice(image_files)
             random_image_path = os.path.join(test_path, random_image)  
              
-            x = FE.get_feature_vector(face_mesh, random_image_path, normalized=True) 
+            x = FE.get_feature_vector(face_mesh, random_image_path, normalize=True) 
             
             # Create the expected pattern to match the part with the numbers, focusing on the ID and parentheses with values
             pattern = rf'ID{curr_folder}_\((-?\d+)_(-?\d+)_(-?\d+)\)'
