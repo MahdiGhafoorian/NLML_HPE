@@ -250,11 +250,11 @@ def main():
     
     end_time = time.time()     
     execution_time = end_time - start_time
-    print(f"Training successfully completed!")
+    print("Training successfully completed!")
     print(f"Time taken: {execution_time} seconds")
     
-    np.savez('Factor_Matrices.npz', U_yaw=factors[1], U_pitch=factors[2], U_roll=factors[3], U_id=factors[0])
-    np.savez('Trained_data.npz', optimized_yaw=optimized_yaw, optimized_pitch=optimized_pitch, optimized_roll=optimized_roll, CoreTensor=core_tensor, W=W)
+    np.savez('outputs/features/Factor_Matrices.npz', U_yaw=factors[1], U_pitch=factors[2], U_roll=factors[3], U_id=factors[0])
+    np.savez('outputs/features/Trained_data.npz', optimized_yaw=optimized_yaw, optimized_pitch=optimized_pitch, optimized_roll=optimized_roll, CoreTensor=core_tensor, W=W)
     
     
     #=========================================================================================================
