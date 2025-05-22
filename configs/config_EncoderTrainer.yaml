@@ -1,0 +1,24 @@
+yaw_bins:            # yaw bins with the interval between them
+  min_bin: -50
+  max_bin:  51
+  interval: 10
+
+pitch_bins:          # pitch bins with the interval between them
+  min_bin: -40
+  max_bin:  41
+  interval: 10
+
+roll_bins:           # roll bins with the interval between them
+  min_bin: -30
+  max_bin:  31
+  interval: 10
+
+trainset_path: "E:/Mahdi/Databases/3D_DB_(50_40_30)_trainset_singleExpressions_240_Subjects_BIWI_3rd_rotation_convention"
+valset_path:  "E:/Mahdi/Databases/3D_DB_(50_40_30)_valset_singleExpressions_60_Subjects_BIWI_3rd_rotation_convention" 
+
+input_size: 1404   # The number of input to the encoder (This must be equal to the number of flattened features)
+batch_size: 256
+num_epochs: 100
+learning_rate: 1e-4
+weight_decay: 1e-5
+scheduler_step_size: 10

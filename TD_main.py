@@ -7,44 +7,46 @@ main program of Tensor decomposition for 3D head pose estimation
 @author: Mahdi Ghafourian
 """
 
-
-# Basic required packages
-import torch
-import cv2
-import mediapipe as mp
-import numpy as np
-import time
+# Standard Library
 import os
-import random
 import re
-import matplotlib.pyplot as plt
+import time
+import random
 import warnings
-import scipy.io
 import argparse
+
+# Third-Party Libraries
+
+## Numerical & Scientific Computing
+import numpy as np
+from numpy.linalg import svd
+
+
+## Computer Vision & Media Processing
+import mediapipe as mp
+
+## Plotting
+import matplotlib.pyplot as plt
+
+## Configuration Parsing
 import yaml
 
-# our modules
-import CreateTensor
-import TD_Trainer
-import TD_Tester
-from TD_Tester import w_y_values, w_p_values, w_r_values, u_id_values, objective_values
-from helpers import FeatureExtractor as FE
-import EulerAngles_mediapipe
-
-
-# packages to work with Tucker decomposition
+## Tensor Decomposition
 import tensorly as tl
 from tensorly import unfold
 from tensorly.decomposition import tucker
 from tensorly import tucker_to_tensor
-from numpy.linalg import svd
+
+# Local Imports
+import CreateTensor
+import TD_Trainer
+import TD_Tester
+from helpers import FeatureExtractor as FE
 
 
 def load_config(path):
     with open(path, 'r') as f:
-        return yaml.safe_load(f)
-    
-    
+        return yaml.safe_load(f)    
 
 def main():
     warnings.filterwarnings("ignore")    
