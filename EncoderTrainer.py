@@ -85,10 +85,7 @@ class LandmarkEncoder(nn.Module):
             matrices.append(latent[:, start_idx:start_idx + size].view(-1, m, n))
             start_idx += size
         
-        # Reconstruct the input landmarks
-        reconstructed = 0#self.decoder(latent)
-        
-        return matrices, reconstructed
+        return matrices
 
 # Dataset class for loading images, extracting landmarks, and providing labels
 class LandmarkDataset(Dataset):
@@ -121,7 +118,7 @@ class LandmarkDataset(Dataset):
         identities.sort(key=int)
         
         for U_id, folder in enumerate(identities):
-            print(f'Landmarks of subject {U_id} with name {folder} is readed')
+            print(f'Landmarks of subject {U_id} with name {folder} are read')
             folder_path = os.path.join(self.data_path, folder)
             for image_name in os.listdir(folder_path):
                 image_path = os.path.join(folder_path, image_name)
@@ -137,7 +134,7 @@ class LandmarkDataset(Dataset):
                     
                     # Extract landmarks
                     # landmarks = self.extract_landmarks(image_path)
-                    landmarks = FE.get_feature_vector(face_mesh, image_path, normalized=True)
+                    landmarks = FE.get_feature_vector(face_mesh, image_path, normalize=True)
                     if landmarks is not None:
                         self.data.append((landmarks.float(), torch.tensor([wy_idx, wp_idx, wr_idx, U_id])))
                 except (ValueError, IndexError):
@@ -380,7 +377,6 @@ def train_encoder():
     
     scheduler = StepLR(optimizer, step_size=scheduler_step_size, gamma=0.9)
     matrix_loss_fn = nn.MSELoss()
-    reconstruction_loss_fn = nn.MSELoss()
     
     lambda_penalty = 0.1
     
@@ -388,7 +384,6 @@ def train_encoder():
         encoder.train()
             
         epoch_matrix_loss = 0
-        epoch_reconstruction_loss = 0
         epoch_total_loss = 0
         
         # train loop ############################################################################################
@@ -413,7 +408,7 @@ def train_encoder():
             # batch_landmarks = (batch_landmarks - mean) / (std + 1e-6)
             
             # Forward pass
-            predicted_matrices, reconstructed_landmarks = encoder(batch_landmarks)
+            predicted_matrices = encoder(batch_landmarks)
             # predicted_matrices = encoder(batch_landmarks)
             
             
@@ -426,12 +421,9 @@ def train_encoder():
                 # if (epoch > num_epochs and epoch % 5 == 0):
                 #     penalty = generalized_cosine_penalty(pred, gt.unsqueeze(dim=1), amplitudes, frequencies, phases, vertical_shifts)
     
-            
-            # Compute the loss for input reconstruction
-            # reconstruction_loss = reconstruction_loss_fn(reconstructed_landmarks, batch_landmarks)
-            reconstruction_loss = 0
+                        
             # Combine losses        
-            total_loss = matrix_loss #+ (lambda_penalty * penalty) #+ reconstruction_loss
+            total_loss = matrix_loss #+ (lambda_penalty * penalty) 
             
             # Backward pass
             total_loss.backward()
@@ -449,7 +441,6 @@ def train_encoder():
             
             # Accumulate losses for this batch
             epoch_matrix_loss += matrix_loss.item()
-            epoch_reconstruction_loss += 0#reconstruction_loss.item()
             epoch_total_loss += total_loss.item()
         
         scheduler.step()
@@ -461,10 +452,8 @@ def train_encoder():
         # Validation step after each epoch
         encoder.eval()  # Set the model to evaluation mode
         val_matrix_loss = 0
-        val_reconstruction_loss = 0
         val_total_loss = 0.0
         val_mae_matrix, val_rmse_matrix = 0.0, 0.0
-        val_mae_recon, val_rmse_recon = 0.0, 0.0
         
         with torch.no_grad():  # Disable gradient calculation during validation
             # validation loop
@@ -489,7 +478,7 @@ def train_encoder():
                 # batch_landmarks = (batch_landmarks - mean) / (std + 1e-6)
                 
                 # Forward pass (same as during training)
-                predicted_matrices, reconstructed_landmarks = encoder(batch_landmarks)
+                predicted_matrices = encoder(batch_landmarks)
                 # predicted_matrices = encoder(batch_landmarks)
     
                 # Compute the loss for latent matrices (validation)
@@ -508,35 +497,23 @@ def train_encoder():
                 batch_mae_matrix /= len(predicted_matrices)
                 batch_rmse_matrix /= len(predicted_matrices)
                 val_mae_matrix += batch_mae_matrix
-                val_rmse_matrix += batch_rmse_matrix
-    
-                # Compute MAE, MSE, RMSE for reconstructed landmarks
-                mae_recon, mse_recon, rmse_recon = compute_metrics(reconstructed_landmarks, batch_landmarks)
-                val_mae_recon += mae_recon
-                val_rmse_recon += rmse_recon
-                
-                # Compute the loss for input reconstruction (validation)
-                reconstruction_loss = 0# reconstruction_loss_fn(reconstructed_landmarks, batch_landmarks)
-                
+                val_rmse_matrix += batch_rmse_matrix                                  
+                                
                 # Combine losses
-                total_loss = matrix_loss #+ (lambda_penalty * penalty) #+ reconstruction_loss
+                total_loss = matrix_loss #+ (lambda_penalty * penalty) 
                 
                 # Accumulate validation losses
                 val_matrix_loss += matrix_loss.item()
-                val_reconstruction_loss += 0#reconstruction_loss.item()
                 val_total_loss += total_loss.item()
     
     
         val_mae_matrix /= len(val_loader)
         val_rmse_matrix /= len(val_loader)
-        val_mae_recon /= len(val_loader)
-        val_rmse_recon /= len(val_loader)
         
         # Print average validation loss
         val_num_batches = len(val_loader)
         print(f"Validation - Epoch [{epoch+1}/{num_epochs}] ------ Total Loss: {val_total_loss/val_num_batches:.4f} \n")
         print(f"  Predicted Matrices - MAE: {val_mae_matrix:.4f},  RMSE: {val_rmse_matrix:.4f} \n")
-        # print(f"  Reconstructed Landmarks - MAE: {val_mae_recon:.4f},  RMSE: {val_rmse_recon:.4f} \n")
         
         # Save the model if the validation loss has improved
         if val_total_loss <= best_val_loss:
@@ -546,7 +523,9 @@ def train_encoder():
             best_epoch = epoch + 1
     
     # After training, save the best model
-    torch.save(best_model_state, 'Encoder.pth')
+    if not os.path.exists('models'):
+        os.makedirs('models')
+    torch.save(best_model_state, 'models/Encoder.pth')
     print(f'Best Model Saved at Epoch {best_epoch} with train loss = {best_train_loss:.4f} and val loss = {best_val_loss/val_num_batches:.4f}')
 
 if __name__ == "__main__":   
