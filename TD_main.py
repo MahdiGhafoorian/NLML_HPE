@@ -55,9 +55,9 @@ def main():
     
     parser = argparse.ArgumentParser()
     # parser.add_argument('--config', type=str, required=True)
-    parser.add_argument('--use_rotation_features', type=str)  #  0 mean use landmark to create the tensor  |  1 means use rotation matrix to create the tensor
+    parser.add_argument('--use_rotation_features', type=int, default=1)  #  0 mean use landmark to create the tensor  |  1 means use rotation matrix to create the tensor
     parser.add_argument('--perform_validation', type=bool)    # default: True
-    
+
     args = parser.parse_args()
     
     # Load config
@@ -136,11 +136,10 @@ def main():
         # tensor_file = 'train_tensor_landmarks_normalized_240Subjects_mixedEXP.npy'
         # tensor_file = 'train_tensor_landmarks_normalized_1620Subjects.npy'
         "configs/config_TD_main.yaml"
-        tensor_file = 'data/train_tensor_landmarks_normalized_240Subjects_BIWI_Convention_3.npy'
-        # tensor_file = 'train_tensor_landmarks_normalized_240Subjects_mixedEXP.npy'
+        # tensor_file = 'data/train_tensor_landmarks_normalized_240Subjects_BIWI_Convention_3.npy'
+        tensor_file = 'data/train_tensor_landmarks_normalized_240Subjects_300W_RzRyRx_(+y-p-r)_Convention.npy'
     else:
         tensor_file = 'data/train_tensor_rotations_300Subjects.npy'
-        # tensor_file = 'train_tensor_rotations_sase_mini.npy'
     
     # Check if the tensor file exists
     if os.path.exists(tensor_file):
@@ -353,7 +352,7 @@ def main():
         true_euler_angles = []
         pred_euler_angles = []
         
-        val_set_path = "3D_DB_(50_40_30)_valset_mixedExpressions(60_Subjects)"         
+        # val_set_path = "3D_DB_(50_40_30)_valset_mixedExpressions(60_Subjects)"         
         
         u_id_shape = factors[0][1].size
         # val_set_path = "3D_DB_(50_40_30)_valset_mixedExpressions(60_Subjects)" 
