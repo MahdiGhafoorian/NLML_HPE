@@ -1,0 +1,19 @@
+yaw_bins:            # grount truth yaw bins with the interval between them
+  min_bin: -50
+  max_bin:  50.1
+  interval: 0.1
+
+pitch_bins:          # grount truth pitch bins with the interval between them
+  min_bin: -40
+  max_bin:  40.1
+  interval: 0.1
+
+roll_bins:           # grount truth roll bins with the interval between them
+  min_bin: -30
+  max_bin:  30.1
+  interval: 0.1
+
+epochs: 50
+batch_size: 256
+lr: 5e-3
+
