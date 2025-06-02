@@ -305,8 +305,8 @@ def train_encoder():
     input_size = config["input_size"]
     batch_size = config["batch_size"]
     num_epochs = config["num_epochs"]
-    learning_rate = config["learning_rate"]
-    weight_decay = config["weight_decay"]
+    learning_rate = float(config["learning_rate"])
+    weight_decay = float(config["weight_decay"])
     scheduler_step_size = config["scheduler_step_size"]    
     
     # Load datasets and DataLoaders
