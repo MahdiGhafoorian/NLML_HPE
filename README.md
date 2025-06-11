@@ -2,7 +2,7 @@
 # NLML_HPE: Head Pose Estimation with Limited Data via Manifold Learning
 
 
-This repository is an official implementation of [NLML_HPE](https://github.com/MahdiGhafoorian/NLML_HPE).
+This repository is the official implementation of [NLML_HPE](https://github.com/MahdiGhafoorian/NLML_HPE) head pose estimation method.
 
 ## Overview
 
@@ -10,7 +10,7 @@ This repository is an official implementation of [NLML_HPE](https://github.com/M
   <img src="assets/NLML_HPE_demo.gif" />
 </p>
 
-We propose a novel deep learning approach for head pose estimation with limited training data via non-linear manifold learning called NLML-HPE. This method is based on the combination of tensor decomposition (i.e., Tucker decomposition) and feed forward neural network. Unlike traditional classification-based approaches, our method formulates head pose estimation as a regression problem, mapping input landmarks to a continuous representation of pose angles.
+We proposed a novel deep learning approach for head pose estimation with limited training data via non-linear manifold learning called NLML-HPE. This method is based on the combination of tensor decomposition (i.e., Tucker decomposition) and feed forward neural network. Unlike traditional classification-based approaches, our method formulates head pose estimation as a regression problem, mapping input landmarks to a continuous representation of pose angles.
 
 ##  Preparation
 
@@ -70,7 +70,8 @@ You can choose to use the pretrained ViT-B/16 [weigthts](https://github.com/rwig
   ```
 ## Training & Evaluation
 
-Download trained weight from [gdrive](https://drive.google.com/file/d/1bqfJs4mvQd4jQELsj3utEEeS6SDzW30_/view?usp=sharing), then you can evaluate the model following:
+To train our model, you need to run these following script in the given order TD_main.py, NLML_HPE_EncoderTrainer.py, NLML_HPE_MLPHeadsTrainer.py, and NLML_HPE_Model_Builder.py.
+
 
 ```sh
 python test.py  --batch_size 64 \
