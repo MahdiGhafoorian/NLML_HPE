@@ -44,10 +44,6 @@ python create_filename_list.py --root_dir datasets/300W_LP
 ```
 The BIWI datasets needs be preprocessed by a face detector to cut out the faces from the images. You can use the script provided [here](https://github.com/shamangary/FSA-Net/blob/master/data/TYY_create_db_biwi.py). For 7:3 splitting of the BIWI dataset you can use the equivalent script [here](https://github.com/shamangary/FSA-Net/blob/master/data/TYY_create_db_biwi_70_30.py). The cropped image size is set to *256*.
 
-### Download weights 
-Download trained weights from [gdrive](https://drive.google.com/file/d/1bqfJs4mvQd4jQELsj3utEEeS6SDzW30_/view?usp=sharing)
-You can choose to use the pretrained ViT-B/16 [weigthts](https://github.com/rwightman/pytorch-image-models/releases/download/v0.1-vitjx/jx_vit_base_patch16_224_in21k-e5005f0a.pth) for the feature extractor. (optional) 
-
 ### Directory structure
 * After preparation, you will be able to see the following directory structure: 
   ```
