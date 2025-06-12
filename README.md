@@ -88,8 +88,9 @@ python train.py --batch_size 64 \
                 --filename_list datasets/300W_LP/files.txt
 ```
 
-## Inference & Visualization
-You can get the visualizations following:
+## Inference and Test
+We have two scripts for the inference. The first one, optimizes the cosine function with the (learned) optimized sinusoidal parameters from TD_main. This inference is performed on single input by calling TD_Inference. However, it is slow and time-consuming, the reason we trained an encoder plus three MLP heads to train a FFN that learns to do the same inference but in real-time. To do this, we provided NLML_HPE_Test to do the inference on the selected test set.
+
 ```sh
 python inference.py  --model_path ./weights/TokenHPEv1-ViTB-224_224-lyr3.tar \
                      --image_path img_path_here
