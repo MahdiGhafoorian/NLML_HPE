@@ -47,7 +47,7 @@ The BIWI datasets needs be preprocessed by a face detector to cut out the faces 
 ### Directory structure
 * After preparation, you will be able to see the following directory structure: 
   ```
-  TokenHPE
+  NLML_HPE
   ├── datasets
   │   ├── 300W_LP
   │     ├── files.txt
@@ -56,9 +56,7 @@ The BIWI datasets needs be preprocessed by a face detector to cut out the faces 
   │     ├── files.txt
   │     ├── ... 
   │   ├── ...
-  ├── weights
-  │   ├── TokenHPEv1-ViTB-224_224-lyr3.tar
-  ├── figs
+  ├── assets
   ├── create_filename_list.py
   ├── datasets.py
   ├── README.md
@@ -66,35 +64,40 @@ The BIWI datasets needs be preprocessed by a face detector to cut out the faces 
   ```
 ## Training & Evaluation
 
-To train our model, you need to run these following script in the given order TD_main.py, NLML_HPE_EncoderTrainer.py, NLML_HPE_MLPHeadsTrainer.py, and NLML_HPE_Model_Builder.py.
+To do both training and evaluation, you need first to configure you setting, paths, etc. in all config files found in configs folder. 
+
+To train our model, you need to run the following scripts in the given order: TD_main.py, NLML_HPE_EncoderTrainer.py, NLML_HPE_MLPHeadsTrainer.py, and NLML_HPE_Model_Builder.py.
 
 
 ```sh
-python test.py  --batch_size 64 \
-                --dataset ALFW2000 \
-                --data_dir datasets/AFLW2000 \
-                --filename_list datasets/AFLW2000/files.txt \
-                --model_path ./weights/TokenHPEv1-ViTB-224_224-lyr3.tar \
-                --show_viz False 
+python TD_main.py  --use_rotation_features=0 
+		   --perform_validation=False 
+
+python NLML_HPE_EncoderTrainer.py
+
+python NLML_HPE_MLPHeadsTrainer.py
+
+python NLML_HPE_Model_Builder.py
+
 ```
-You can train the model following:
+
+You can evaluate the model following:
 
 ```sh
-python train.py --batch_size 64 \
-                --num_epochs 60 \
-                --lr 0.00001 \
-                --dataset Pose_300W_LP \
-                --data_dir datasets/300W_LP \
-                --filename_list datasets/300W_LP/files.txt
+python NLML_HPE_Test.py
 ```
 
 ## Inference and Test
-We have two scripts for the inference. The first one, optimizes the cosine function with the (learned) optimized sinusoidal parameters from TD_main. This inference is performed on single input by calling TD_Inference. However, it is slow and time-consuming, the reason we trained an encoder plus three MLP heads to train a FFN that learns to do the same inference but in real-time. To do this, we provided NLML_HPE_Test to do the inference on the selected test set.
+We have two scripts for the inference. The first one, optimizes the cosine function with the (learned) optimized sinusoidal parameters from TD_main. This inference can be performed by calling TD_Inference. However, it is slow and time-consuming, the reason we trained an encoder plus three MLP heads to train a FFN that learn to do the same inference but in real-time. To do this, we provided NLML_HPE_Test to do the inference on the selected test set. You can use either scripts for the inference on the input image:
 
 ```sh
-python inference.py  --model_path ./weights/TokenHPEv1-ViTB-224_224-lyr3.tar \
-                     --image_path img_path_here
+python TD_Inference.py --image_path="{your image}"
 ```
+or
+```sh
+python NLML_HPE_Test.py
+```
+
 ## Main results
 
 
