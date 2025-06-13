@@ -14,6 +14,7 @@ import warnings
 
 # Third-Party Library Imports
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
 import torch
@@ -297,51 +298,92 @@ def NLML_HPE_Tester():
         
         val_set_path = "E:/Mahdi/Databases/3D_DB_(50_40_30)_valset_singleExpressions_60_Subjects_300W_RzRyRx_(+y-p-r)_rotation_convention" 
         
-        folders = [name for name in os.listdir(val_set_path) if os.path.isdir(os.path.join(val_set_path, name))]
+        # folders = [name for name in os.listdir(val_set_path) if os.path.isdir(os.path.join(val_set_path, name))]
          
-        for curr_folder in folders:
-            test_path = os.path.join(val_set_path, curr_folder)  
-            image_files = [f for f in os.listdir(test_path) if f.endswith('.png')]
+        # for curr_folder in folders:
+        #     test_path = os.path.join(val_set_path, curr_folder)  
+        #     image_files = [f for f in os.listdir(test_path) if f.endswith('.png')]
        
-            for image in image_files:
-                cnt += 1
+        #     for image in image_files:
+        #         cnt += 1
                 
-                if cnt % 100 == 0:
-                    print(f'{cnt} data are valiadted')
+        #         if cnt % 100 == 0:
+        #             print(f'{cnt} data are valiadted')
                                     
-                image_path = os.path.join(test_path, image) 
-                test_landmarks = FE.get_feature_vector(face_mesh, image_path, normalize=True)             
+        #         image_path = os.path.join(test_path, image) 
+        #         test_landmarks = FE.get_feature_vector(face_mesh, image_path, normalize=True)             
                             
-                test_landmarks = test_landmarks.unsqueeze(dim=0)
-                test_landmarks = test_landmarks.float()
-                test_landmarks = test_landmarks.to(device)
+        #         test_landmarks = test_landmarks.unsqueeze(dim=0)
+        #         test_landmarks = test_landmarks.float()
+        #         test_landmarks = test_landmarks.to(device)
                 
-                processed_smpls += 1
-                # Create the expected pattern to match the part with the numbers, focusing on the ID and parentheses with values
-                pattern = rf'ID{curr_folder}_\((-?\d+)_(-?\d+)_(-?\d+)\)'
+        #         processed_smpls += 1
+        #         # Create the expected pattern to match the part with the numbers, focusing on the ID and parentheses with values
+        #         pattern = rf'ID{curr_folder}_\((-?\d+)_(-?\d+)_(-?\d+)\)'
             
-                # Apply the regex match
-                match = re.search(pattern, image_path)        
+        #         # Apply the regex match
+        #         match = re.search(pattern, image_path)        
             
-                if match:
-                    # Extract Y, Z, and W as integers
-                    true_yaw, true_pitch, true_roll = match.groups()
-                    true_angles.append((float(true_yaw), float(true_pitch), float(true_roll)))                
-                else:
-                    print(f'no match at id = {curr_folder}')
-                    continue
+        #         if match:
+        #             # Extract Y, Z, and W as integers
+        #             true_yaw, true_pitch, true_roll = match.groups()
+        #             true_angles.append((float(true_yaw), float(true_pitch), float(true_roll)))                
+        #         else:
+        #             print(f'no match at id = {curr_folder}')
+        #             continue
                 
-                try:
+        #         try:
                 
-                    # Perform prediction
-                    with torch.no_grad():
-                        predicted_yaw, predicted_pitch, predicted_roll = NLML_HPE_model(test_landmarks)                
-                        pred_angles_NLML_HPE.append((round(np.degrees(predicted_yaw.item()), 3) , round(np.degrees(predicted_pitch.item()),3) , round(np.degrees(predicted_roll.item()),3) ))  
+        #             # Perform prediction
+        #             with torch.no_grad():
+        #                 predicted_yaw, predicted_pitch, predicted_roll = NLML_HPE_model(test_landmarks)                
+        #                 pred_angles_NLML_HPE.append((round(np.degrees(predicted_yaw.item()), 3) , round(np.degrees(predicted_pitch.item()),3) , round(np.degrees(predicted_roll.item()),3) ))  
                                             
-                except Exception as e:
-                    # Handle any other exceptions
-                    print(f"An unexpected error occurred: {e}")            
+        #         except Exception as e:
+        #             # Handle any other exceptions
+        #             print(f"An unexpected error occurred: {e}")            
         
+        # Load metadata.csv
+        metadata_file = os.path.join(val_set_path, "metadata.csv")
+        df = pd.read_csv(metadata_file)
+        
+        cnt = 0
+        processed_smpls = 0
+        true_angles = []
+        pred_angles_NLML_HPE = []
+        
+        # Iterate over dataframe
+        for idx, row in df.iterrows():
+            cnt += 1
+            if cnt % 100 == 0:
+                print(f'{cnt} data are validated')
+        
+            # Build full path to image
+            identity = row["identity"]
+            filename = row["filename"]
+        
+            image_path = os.path.join(val_set_path, "images", f"ID{identity}", filename)
+            
+            # Read and extract features
+            test_landmarks = FE.get_feature_vector(face_mesh, image_path, normalize=True)             
+            test_landmarks = test_landmarks.unsqueeze(dim=0).float().to(device)
+        
+            processed_smpls += 1
+        
+            # Read true pose angles directly from CSV
+            true_yaw, true_pitch, true_roll = row["yaw"], row["pitch"], row["roll"]
+            true_angles.append((float(true_yaw), float(true_pitch), float(true_roll)))
+        
+            try:
+                with torch.no_grad():
+                    predicted_yaw, predicted_pitch, predicted_roll = NLML_HPE_model(test_landmarks)                
+                    pred_angles_NLML_HPE.append((
+                        round(np.degrees(predicted_yaw.item()), 3),
+                        round(np.degrees(predicted_pitch.item()), 3),
+                        round(np.degrees(predicted_roll.item()), 3)
+                    ))  
+            except Exception as e:
+                print(f"An unexpected error occurred: {e}")
                    
      
         # Function to count values in each interval
