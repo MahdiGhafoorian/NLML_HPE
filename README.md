@@ -6,14 +6,11 @@ This repository is the official implementation of [NLML_HPE](https://github.com/
 
 ## Overview
 
-<p align="center">
-  <img src="assets/NLML_HPE_demo.gif" />
-</p>
 
 <p align="center">
-  <img src="assets/NLML_HPE_demo.gif" width="300"/>
-  <img src="assets/Girl.gif" width="300"/>
-  <img src="assets/Man_call_smartphone.gif" width="300"/>
+  <img src="assets/NLML_HPE_demo.gif" width="250"/>
+  <img src="assets/Girl.gif" width="250"/>
+  <img src="assets/Man_call_smartphone.gif" width="250"/>
 </p>
 
 We proposed a novel deep learning approach for head pose estimation with limited training data via non-linear manifold learning called NLML-HPE. Our method is based on the combination of tensor decomposition (i.e., Tucker decomposition) and feed forward neural network. Unlike traditional classification-based approaches, our method formulates head pose estimation as a regression problem, mapping input landmarks to a continuous representation of pose angles.
