@@ -81,7 +81,7 @@ python NLML_HPE_Model_Builder.py
 
 ```
 
-You can evaluate the model following:
+You can evaluate the model running the following command (remember to config params before running):
 
 ```sh
 python NLML_HPE_Test.py
@@ -105,7 +105,7 @@ python generatePose_on_video.py --source = "{webcam or the path to your video}"
 				--output_path = "{the path to save pose included video}"
 ```
 
-Below are some example videos that were processed by our HPE method, where the estimated head poses are visualized. The source of these videos include my own recordings as well as free for use videos under [Pexels](https://www.pexels.com/) and [Pixabay](https://pixabay.com/) content licence:
+Below are some example videos that were processed by NLML_HPE method, where the estimated head poses are visualized. The source of these videos include my own recordings as well as free for use videos under [Pexels](https://www.pexels.com/) and [Pixabay](https://pixabay.com/) content licence:
 
 <p align="center">
   <img src="assets/NLML_HPE_demo.gif" height="260"/>
