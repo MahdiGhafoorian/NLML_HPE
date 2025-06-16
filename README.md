@@ -10,6 +10,12 @@ This repository is the official implementation of [NLML_HPE](https://github.com/
   <img src="assets/NLML_HPE_demo.gif" />
 </p>
 
+<p align="center">
+  <img src="assets/NLML_HPE_demo.gif" width="300"/>
+  <img src="Girl.gif" width="300"/>
+  <img src="Man_call_smartphone.gif" width="300"/>
+</p>
+
 We proposed a novel deep learning approach for head pose estimation with limited training data via non-linear manifold learning called NLML-HPE. Our method is based on the combination of tensor decomposition (i.e., Tucker decomposition) and feed forward neural network. Unlike traditional classification-based approaches, our method formulates head pose estimation as a regression problem, mapping input landmarks to a continuous representation of pose angles.
 
 ##  Preparation
@@ -98,6 +104,14 @@ or (better)
 python NLML_HPE_Test.py
 ```
 You can use the following commands to run the demo:
+
+```sh
+python generatePose_on_video.py --source = "{webcam or the path to your video}"
+		   		--save_output = "{tr for True or fl for False}"
+				--output_path = "{the path to save pose included video}"
+```
+
+Below are some example videos that were processed by our HPE method, where the estimated head poses are visualized. The source of these videos include my own recordings as well as free for use videos under [Pexels](https://www.pexels.com/) and [Pixabay](https://pixabay.com/) content licence.
 
 ## Main results
 
