@@ -10,7 +10,7 @@ This repository is the official implementation of [NLML_HPE](https://github.com/
   <img src="assets/NLML_HPE_demo.gif" />
 </p>
 
-We proposed a novel deep learning approach for head pose estimation with limited training data via non-linear manifold learning called NLML-HPE. This method is based on the combination of tensor decomposition (i.e., Tucker decomposition) and feed forward neural network. Unlike traditional classification-based approaches, our method formulates head pose estimation as a regression problem, mapping input landmarks to a continuous representation of pose angles.
+We proposed a novel deep learning approach for head pose estimation with limited training data via non-linear manifold learning called NLML-HPE. Our method is based on the combination of tensor decomposition (i.e., Tucker decomposition) and feed forward neural network. Unlike traditional classification-based approaches, our method formulates head pose estimation as a regression problem, mapping input landmarks to a continuous representation of pose angles.
 
 ##  Preparation
 
@@ -19,9 +19,9 @@ We proposed a novel deep learning approach for head pose estimation with limited
 
 ### Datasets  
 
-The dataset required to train our model must contain a sample for every combination of Euler angles (yaw, pitch, and roll) for each identity, as our method relies on fully populating all entries of the tensor. To meet this requirement, we rendered all desired combinations of Euler angles from 3D models in FaceScape for each identity using PyTorch3D.
+The dataset required to train our model must contain exactly one sample per every combination of Euler angles (yaw, pitch, and roll) for each identity. This is because our method relies on fully populating all entries of the tensor before decomposition. To meet this requirement, we rendered all desired combinations of Euler angles from 3D models in FaceScape for each identity using PyTorch3D.
 
-We provide a small subset of this dataset, which is permitted for publication. This subset is intended to help you better understand the structure and format of our training and validation data. The provided dataset has already been rendered by us for the specified angle combinations and can be downloaded at:
+We provide a small subset of the our dataset, rendered from the samples that the Facescape authors have permitted to be published. This subset is intended to help you better understand the structure and format of our training and validation data. The provided dataset has already been rendered by us for the specified angle combinations and can be downloaded at:
 
 [DOWNLOAD LINK]
 
@@ -29,7 +29,7 @@ For full-scale training, you will need to download the complete FaceScape datase
 
 [FACEscape DOWNLOAD LINK]
 
-For your validation, follow the [6DRepnet](https://github.com/thohemp/6DRepNet) to prepare the following datasets:
+For the validation, follow the [6DRepnet](https://github.com/thohemp/6DRepNet) to prepare the following datasets:
 
 * **300W-LP**, **AFLW2000** from [here](http://www.cbsr.ia.ac.cn/users/xiangyuzhu/projects/3DDFA/main.htm).
 
@@ -42,7 +42,7 @@ For 300W-LP and AFLW2000 we need to create a *filenamelist*.
 ```
 python create_filename_list.py --root_dir datasets/300W_LP
 ```
-The BIWI datasets needs be preprocessed by a face detector to cut out the faces from the images. You can use the script provided [here](https://github.com/shamangary/FSA-Net/blob/master/data/TYY_create_db_biwi.py). For 7:3 splitting of the BIWI dataset you can use the equivalent script [here](https://github.com/shamangary/FSA-Net/blob/master/data/TYY_create_db_biwi_70_30.py). The cropped image size is set to *256*.
+The BIWI datasets needs be preprocessed by a face detector to cut out the faces from the images. You can use the script provided [here](https://github.com/shamangary/FSA-Net/blob/master/data/TYY_create_db_biwi.py). The cropped image size is set to *256*.
 
 ### Directory structure
 * After preparation, you will be able to see the following directory structure: 
