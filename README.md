@@ -87,26 +87,38 @@ You can evaluate the model following:
 python NLML_HPE_Test.py
 ```
 
-## Inference and Test
+## Inference and Demo
 We have two scripts for the inference. The first one, optimizes the cosine function with the (learned) optimized sinusoidal parameters from TD_main. This inference can be performed by calling TD_Inference. However, it is slow and time-consuming, the reason we trained an encoder plus three MLP heads to train a FFN that learn to do the same inference but in real-time. To do this, we provided NLML_HPE_Test to do the inference on the selected test set. You can use either scripts for the inference on the input image:
 
 ```sh
 python TD_Inference.py --image_path="{your image}"
 ```
-or
+or (better)
 ```sh
 python NLML_HPE_Test.py
 ```
+You can use the following commands to run the demo:
 
 ## Main results
 
 
 We provide some results on AFLW2000 with models trained on 300W_LP. These models are trained on one TITAN V GPU. 
 
-|          config          | MAE  | VMAE | training |   download |
-|:------------------------:|:----:|:----:|:--------:|:-------------:|
-| TokenHPEv1-ViT/B-224*224-lyr3 | 4.81 | 6.09 | ~24hours |   [gdrive](https://drive.google.com/file/d/1bqfJs4mvQd4jQELsj3utEEeS6SDzW30_/view?usp=sharing)     |
-
+| Method       | \multicolumn{4}{c|}{Euler angles errors} | \multicolumn{4}{c|}{Vector errors} |
+|--------------|------------------------|-------------------------|
+|              | AFLW2000 |        |        |       | BIWI |        |        |       | AFLW2000 |        |        |       | BIWI |        |        |       |
+|              | Yaw | Pitch | Roll | MAE  | Yaw | Pitch | Roll | MAE | Left | Down | Front | MAEV | Left | Down | Front | MAEV |
+|--------------|------|-------|------|------|------|-------|------|------|------|-------|--------|-------|------|-------|--------|-------|
+| 3DDFA [40]   | 4.71 | 27.08 | 28.43 | 20.07 | 5.50 | 41.90 | 13.22 | 20.20 | 29.38 | 45.00 | 35.12 | 34.47 | 23.31 | 45.00 | 35.12 | 34.47 |
+| Dlib [18]    | 8.50 | 11.25 | 22.83 | 14.19 | 11.66 | 8.22 | 19.56 | 12.00 | 26.56 | 28.51 | 14.31 | 23.18 | 24.84 | 21.70 | 14.30 | 20.28 |
+| HopeNet [25] | 5.31 | 7.12  | 6.13  | 6.19  | 6.00 | 5.88  | 3.72  | 5.20  | 7.07  | 5.98  | 7.50  | 6.85  | 7.65  | 6.73  | 8.68  | 7.69  |
+| FSA-Net [38] | 4.96 | 6.34  | 4.77  | 5.36  | 4.96 | 4.51  | 3.50  | 4.32  | 6.75  | 6.21  | 7.34  | 6.77  | 6.03  | 5.96  | 7.22  | 6.40  |
+| QuatNet [16] | 3.97 | 5.62  | 3.92  | 4.50  | 2.94 | 4.00  | 4.01  | 3.65  | -     | -     | -     | -     | -     | -     | -     | -     |
+| HPE [17]     | 4.80 | 6.18  | 4.87  | 5.28  | 5.12 | 4.02  | 4.57  | 4.57  | -     | -     | -     | -     | -     | -     | -     | -     |
+| TriNet [7]   | 4.36 | 5.81  | 4.51  | 4.89  | 4.18 | 5.00  | 4.50  | 4.56  | 6.16  | 5.95  | 6.82  | 6.31  | 5.58  | **5.80** | 7.55  | 6.64  |
+| TokenHPE [39]| **2.68** | 3.41 | **1.59** | **2.56** | **2.41** | 3.05 | **1.79** | **2.41** | **3.38** | **3.90** | **4.63** | **3.97** | **5.21** | **5.71** | **7.06** | **6.00** |
+| 6DRepNet [14]| 2.79 | **3.39** | 1.65 | 2.61 | 3.44 | **2.87** | 2.41 | 2.91 | 3.47 | 3.87 | 4.71 | 4.02 | **4.77** | 5.12 | **6.48** | **5.65** |
+| NLML-HPE (ours)| 3.06 | 4.23 | 1.96 | 3.08 | 3.58 | 5.29 | 2.67 | 3.85 | 4.02 | 4.77 | 5.53 | 4.78 | 5.34 | 6.33 | 6.00 | 6.00 |
 
 ## **Acknowledgement**
 Many thanks to the authors of [6DRepnet](https://github.com/thohemp/6DRepNet). We reuse their code for data preprocessing and evaluation which greatly reduced redundant work.
