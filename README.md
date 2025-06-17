@@ -27,7 +27,7 @@ We provide a small subset of the our dataset, rendered from the samples that the
 
 For full-scale training, you will need to download the complete FaceScape dataset from the following address. You can then render one random 3D model per identity with your desired pose combinations.
 
-[FACEscape DOWNLOAD LINK]
+[FaceScape dataset](https://facescape.nju.edu.cn/)
 
 For the validation, follow the [6DRepnet](https://github.com/thohemp/6DRepNet) to prepare the following datasets:
 
