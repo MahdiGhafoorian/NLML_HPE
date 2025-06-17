@@ -43,29 +43,6 @@ def discretize_interval(a, b, n):
     points = [a + i * spacing for i in range(n)]
     return points, spacing
 
-def find_corresonding_image(directory, name_part):
-    """
-    Search for PNG files in the given directory that contain the specified name_part.
-
-    Parameters:
-    directory (str): The directory to search in.
-    name_part (str): The part of the filename to search for.
-
-    Returns:
-    list: List of matching PNG filenames.
-    """
-    matching_files = []
-
-    # Iterate over all files in the directory
-    for filename in os.listdir(directory):
-        # Check if the file is a PNG and contains the name_part
-        if filename.endswith('.png') and name_part in filename:
-            full_path = os.path.join(directory, filename)
-            matching_files.append(full_path)
-
-    return matching_files
-        
-
 # This function creates the tensor for the decomposition and filling it 
 def Compose_Tensor(input_image_path, tensor_shape, yaw_discretized, 
                        pitch_discretized, roll_discretized, identities, use_rotation_features):
