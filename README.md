@@ -55,10 +55,16 @@ The BIWI datasets needs be preprocessed by a face detector to cut out the faces 
   │   ├── AFLW2000 
   │     ├── files.txt
   │     ├── ... 
-  │   ├── ...
+  │   ├── BIWI.npz
+  │   ├── Facescape
+  │     ├── rendered_db
+  │       ├── ID1
+  │       ├── ID2
+  │       ├── ... 
   ├── assets
   ├── create_filename_list.py
-  ├── datasets.py
+  ├── helpers
+  │   ├── datasets.py
   ├── README.md
   ├── ...
   ```
