@@ -4,6 +4,8 @@
 
 This repository is the official implementation of [NLML_HPE](https://github.com/MahdiGhafoorian/NLML_HPE) head pose estimation method.
 
+Paper: [Arxiv](https://github.com/MahdiGhafoorian/NLML_HPE) | 
+
 ## Overview
 
 <p align="center">
@@ -55,16 +57,17 @@ The BIWI datasets needs be preprocessed by a face detector to cut out the faces 
   │   ├── AFLW2000 
   │     ├── files.txt
   │     ├── ... 
-  │   ├── BIWI.npz
+  │   ├── BIWI
+  │       ├── BIWI.npz
   │   ├── Facescape
   │     ├── rendered_db
   │       ├── ID1
   │       ├── ID2
   │       ├── ... 
-  ├── assets
-  ├── create_filename_list.py
   ├── helpers
   │   ├── datasets.py
+  ├── assets
+  ├── create_filename_list.py
   ├── README.md
   ├── ...
   ```
@@ -111,7 +114,7 @@ python generatePose_on_video.py --source = "{webcam or the path to your video}"
 				--output_path = "{the path to save pose included video}"
 ```
 
-Below are some example videos that were processed by NLML_HPE method, where the estimated head poses are visualized. The source of these videos include my own recordings as well as free for use videos under [Pexels](https://www.pexels.com/) and [Pixabay](https://pixabay.com/) content licence:
+Below are some example videos that were processed by NLML_HPE, where the estimated head poses are visualized. The source of these videos include my own recordings as well as free for use videos under [Pexels](https://www.pexels.com/) and [Pixabay](https://pixabay.com/) content licence:
 
 <p align="center">
   <img src="assets/NLML_HPE_demo.gif" height="260"/>
@@ -139,7 +142,7 @@ We provide some results on AFLW2000 with models trained on 300W_LP. These models
 
 
 ## **Acknowledgement**
-Many thanks to the authors of [6DRepnet](https://github.com/thohemp/6DRepNet). We reuse their code for data preprocessing and evaluation which greatly reduced redundant work.
+Many thanks to the authors of [6DRepnet](https://github.com/thohemp/6DRepNet) and [TokenHPE](https://github.com/zc2023/TokenHPE). We reuse their code for data preprocessing and evaluation which greatly reduced redundant work.
 
 ## **Citation**
 
