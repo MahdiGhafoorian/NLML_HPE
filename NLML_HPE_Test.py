@@ -261,9 +261,7 @@ def NLML_HPE_Tester():
                 not_detected_lndmrks += 1
                 continue
             
-            test_landmarks = test_landmarks.unsqueeze(dim=0)
-            test_landmarks = test_landmarks.float()
-            test_landmarks = test_landmarks.to(device)        
+            test_landmarks = test_landmarks.unsqueeze(0).float().to(device)       
             
             processed_smpls += 1
             
@@ -307,9 +305,7 @@ def NLML_HPE_Tester():
                 image_path = os.path.join(test_path, image) 
                 test_landmarks = FE.get_feature_vector(face_mesh, image_path, normalize=True)             
                             
-                test_landmarks = test_landmarks.unsqueeze(dim=0)
-                test_landmarks = test_landmarks.float()
-                test_landmarks = test_landmarks.to(device)
+                test_landmarks = test_landmarks.unsqueeze(0).float().to(device)
                 
                 processed_smpls += 1
                 # Create the expected pattern to match the part with the numbers, focusing on the ID and parentheses with values
@@ -404,10 +400,7 @@ def NLML_HPE_Tester():
                 not_detected_lndmrks += 1
                 continue
             
-            test_landmarks = test_landmarks.unsqueeze(dim=0)
-            test_landmarks = test_landmarks.float()
-            test_landmarks = test_landmarks.to(device)
-                    
+            test_landmarks = test_landmarks.unsqueeze(0).float().to(device)                    
             
             processed_smpls += 1
                         
