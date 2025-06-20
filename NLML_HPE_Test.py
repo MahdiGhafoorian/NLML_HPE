@@ -424,9 +424,7 @@ def NLML_HPE_Tester():
         ######## AFLW2000 val set ##############
             
             
-    end_time = time.time()
-    
-    
+    end_time = time.time()    
     
     # Compute metrics for each set of predicted angles
     print("=============================Metrics for pred_angles_NLML_HPE:")
