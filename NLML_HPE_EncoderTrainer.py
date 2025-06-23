@@ -17,6 +17,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import mediapipe as mp
 import yaml
+import re
 
 # PyTorch and Related Modules
 import torch
@@ -124,9 +125,10 @@ class LandmarkDataset(Dataset):
                 image_path = os.path.join(folder_path, image_name)
                 try:
                     # Remove "ID(num1)_" prefix and ".png" suffix, then split to get pose values
-                    main_part = image_name.replace('.png', '').split('_(')[1]  # Extract "(num2)_(num3)_(num4)"
+                    # main_part = image_name.replace('.png', '').split('_(')[1]  # Extract "(num2)_(num3)_(num4)"
                     # Remove outer parentheses and split to get wy, wp, wr
-                    wy, wp, wr = map(float, main_part.strip('()').split('_'))
+                    # wy, wp, wr = map(float, main_part.strip('()').split('_'))
+                    wy, wp, wr = extract_angles(image_name)
                     
                     wy_idx = np.where(self.yaw_bins == wy)[0][0]
                     wp_idx = np.where(self.pitch_bins == wp)[0][0]
@@ -276,6 +278,14 @@ def generalized_cosine_penalty(outputs, inputs, amplitudes, frequencies, phases,
     penalty = torch.mean((outputs - expected_cosines) ** 2)
 
     return penalty
+
+def extract_angles(image_name):
+    match = re.search(r'_\( *(-?\d+)_(-?\d+)_(-?\d+)\)', image_name)
+    if match:
+        yaw, pitch, roll = map(int, match.groups())
+        return yaw, pitch, roll
+    else:
+        raise ValueError(f"Filename pattern not matched: {image_name}")
 
 def load_config(path):
     with open(path, 'r') as f:
