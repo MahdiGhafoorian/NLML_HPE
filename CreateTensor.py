@@ -7,12 +7,16 @@ Code to Create Tensor for Manifold Learning
 @author: Mahdi Ghafourian
 """
 
+# Standard library
 import os
-import struct
+import glob
+
+# Third-party libraries
 import torch
 import mediapipe as mp
-import numpy as np
 import tensorly as tl
+
+# Local application imports
 from helpers import IntrinsicRotation as IR
 from helpers import FeatureExtractor as FE
 
@@ -43,6 +47,7 @@ def discretize_interval(a, b, n):
     points = [a + i * spacing for i in range(n)]
     return points, spacing
 
+
 # This function creates the tensor for the decomposition and filling it 
 def Compose_Tensor(input_image_path, tensor_shape, yaw_discretized, 
                        pitch_discretized, roll_discretized, identities, use_rotation_features):
@@ -66,13 +71,15 @@ def Compose_Tensor(input_image_path, tensor_shape, yaw_discretized,
                     
                     # get the landmark of (0,0,0) for the given identity as the base landmark
                     if base_landmarks[id_idx] is None:
-                        base_img_path = os.path.join(image_path, f'ID{identity}_(0_0_0).png')
+                        base_img_path = os.path.join(image_path, f'ID{identity}_(0_0_0)')
+                        base_img_path = glob.glob(base_img_path + ".*")[0]
                         landmarks_tensor = FE.get_feature_vector(face_mesh, base_img_path, normalize=True)
                         base_landmarks[id_idx]  = torch.tensor(landmarks_tensor).reshape(468, 3)         
                     
                     # If we use landmark detector to extract features
                     if(use_rotation_features == 0):                    
-                        cur_img_path = os.path.join(image_path, f'ID{identity}_({yaw_val}_{pitch_val}_{roll_val}).png')
+                        cur_img_path = os.path.join(image_path, f'ID{identity}_({yaw_val}_{pitch_val}_{roll_val})')
+                        cur_img_path = glob.glob(cur_img_path + ".*")[0]
                         features_vector = FE.get_feature_vector(face_mesh, cur_img_path, normalize=True)
                                                 
                         # Check if any landmark is detected, if all zero means not detected
