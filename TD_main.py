@@ -56,7 +56,7 @@ def main():
     parser = argparse.ArgumentParser()
     # parser.add_argument('--config', type=str, required=True)
     parser.add_argument('--use_rotation_features', type=int, default=1)  #  0 mean use landmark to create the tensor  |  1 means use rotation matrix to create the tensor
-    parser.add_argument('--perform_validation', type=bool)    # default: True
+    parser.add_argument('--perform_validation', type=str)    # default: tr for true | fl for false
 
     args = parser.parse_args()
     
@@ -95,6 +95,10 @@ def main():
 
     use_rotation_features = args.use_rotation_features
     validation = args.perform_validation
+    if validation == "tr":
+        validation = True
+    elif validation == "fl":
+        validation = False
     
     # device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     
@@ -137,7 +141,7 @@ def main():
         # tensor_file = 'train_tensor_landmarks_normalized_1620Subjects.npy'
         "configs/config_TD_main.yaml"
         # tensor_file = 'data/train_tensor_landmarks_normalized_240Subjects_BIWI_Convention_3.npy'
-        tensor_file = 'data/train_tensor_landmarks_normalized_240Subjects_300W_RzRyRx_(+y-p-r)_Convention.npy'
+        tensor_file = 'data/train_tensor_landmarks_normalized_240Subjects_300W_RzRyRx_(+y+p+r)_Convention(jpg).npy'
     else:
         tensor_file = 'data/train_tensor_rotations_300Subjects.npy'
     
