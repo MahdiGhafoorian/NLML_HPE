@@ -433,21 +433,21 @@ def main():
         print(f'Total MAE: {mae_total}')
             
             
-    # Calculate the elapsed time
-    elapsed_time = end_time - start_time
-    
-    elapsed_time /= val_set_cnt
-    
-    # Convert to hours, minutes, and seconds
-    hours = int(elapsed_time // 3600)
-    minutes = int((elapsed_time % 3600) // 60)
-    seconds = elapsed_time % 60
-    
-    # Format the elapsed time in hours:minutes:seconds
-    elapsed_time_formatted = f"{hours:02}:{minutes:02}:{seconds:02}"
-    
-    print(f"Average Elapsed time for test: {elapsed_time_formatted}")
-    print('Terminated')
+        # Calculate the elapsed time
+        elapsed_time = end_time - start_time
+        
+        elapsed_time /= val_set_cnt
+        
+        # Convert to hours, minutes, and seconds
+        hours = int(elapsed_time // 3600)
+        minutes = int((elapsed_time % 3600) // 60)
+        seconds = elapsed_time % 60
+        
+        # Format the elapsed time in hours:minutes:seconds
+        elapsed_time_formatted = f"{hours:02}:{minutes:02}:{seconds:02}"
+        
+        print(f"Average Elapsed time for test: {elapsed_time_formatted}")
+        print('Terminated')
 
 if __name__ == "__main__":
     main()

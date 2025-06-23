@@ -1,1 +1,6 @@
 numpy
+mediapipe
+tensorly
+torch
+torchvision
+torchaudio
