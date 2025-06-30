@@ -23,7 +23,8 @@ roll_intervals:
   - [20, 31]
 
 val_set : "facescape" # facescape / biwi / AFLW2000
-val_set_path: "C:\\Mahdi\\development\\TokenHPE-main\\datasets\\BIWI.npz"
+# val_set_path: "C:\\Mahdi\\development\\TokenHPE-main\\datasets\\BIWI.npz"
  
 # val_set_path = "E:/Mahdi/Databases/3D_DB_(50_40_30)_valset_singleExpressions_60_Subjects_300W_RzRyRx_(+y-p-r)_rotation_convention" 
+val_set_path = "E:/Mahdi/Databases/3D_DB_(50_40_30)_valset_singleExpressions_60_Subjects_300W_RzRyRx_(+y+p+r)_rotation_convention(jpg)" 
 # val_set_path= "C:\\Mahdi\\development\\TokenHPE-main\\datasets\\AFLW2000"

@@ -14,7 +14,6 @@ import warnings
 
 # Third-Party Library Imports
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
 import torch
@@ -235,7 +234,6 @@ def NLML_HPE_Tester():
     # val_set = 'facescape' # facescape / biwi / AFLW2000
     
     not_detected_lndmrks = 0
-    outside_range_smpls = 0
     processed_smpls = 0
     
     start_time = time.time()
