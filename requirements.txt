@@ -4,3 +4,4 @@ tensorly
 torch
 torchvision
 torchaudio
+scikit-learn
