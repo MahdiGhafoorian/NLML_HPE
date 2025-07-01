@@ -4,6 +4,13 @@
 
 This repository is the official implementation of [NLML_HPE](https://github.com/MahdiGhafoorian/NLML_HPE) head pose estimation method.
 
+![license](https://img.shields.io/badge/license-MIT-blue)
+![dataset](https://img.shields.io/badge/dataset-FACESCAPE-brightgreen)
+![dataset](https://img.shields.io/badge/dataset-BIWI-brightgreen)
+![dataset](https://img.shields.io/badge/dataset-AFLW-brightgreen)
+![dataset](https://img.shields.io/badge/dataset-300W_LP-brightgreen)
+![Framework](https://img.shields.io/badge/Framework-PyTorch-orange)
+
 Paper: [Arxiv](https://github.com/MahdiGhafoorian/NLML_HPE) | 
 
 ## Overview
@@ -16,8 +23,11 @@ We proposed a novel deep learning approach for head pose estimation with limited
 
 ##  Preparation
 
-### Environments  
-  python == 3.9, torch >= 1.10.1, CUDA ==11.2
+### Installation  
+
+```
+pip install -r requirements.txt
+```
 
 ### Datasets  
 
@@ -61,8 +71,11 @@ The BIWI datasets needs be preprocessed by a face detector to cut out the faces 
   │       ├── BIWI.npz
   │   ├── Facescape
   │     ├── rendered_db
-  │       ├── ID1
-  │       ├── ID2
+  │       ├── 1  
+  │         ├── ID1_(0_0_0).jpg
+  │         ├── ID1_(0_0_10).jpg
+  │         ├── ...
+  │       ├── 2
   │       ├── ... 
   ├── helpers
   │   ├── datasets.py
@@ -144,6 +157,7 @@ We provide some results on AFLW2000 with models trained on 300W_LP. These models
 ## **Acknowledgement**
 Many thanks to the authors of [6DRepnet](https://github.com/thohemp/6DRepNet) and [TokenHPE](https://github.com/zc2023/TokenHPE). We reuse their code for data preprocessing and evaluation which greatly reduced redundant work.
 
+<!--
 ## **Citation**
 
 If you find our work useful, please cite the paper:
@@ -158,3 +172,4 @@ If you find our work useful, please cite the paper:
     pages     = {8897-8906}
 }
 ```
+-->
