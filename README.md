@@ -5,6 +5,7 @@
 This repository is the official implementation of [NLML_HPE](https://github.com/MahdiGhafoorian/NLML_HPE) head pose estimation method.
 
 ![license](https://img.shields.io/badge/license-MIT-blue)
+[![Hugging Face Dataset](https://img.shields.io/badge/HuggingFace-Dataset-blue)](https://huggingface.co/datasets/MahdiGhafourian/rendered_mini_FaceScape_db)
 ![dataset](https://img.shields.io/badge/dataset-FACESCAPE-brightgreen)
 ![dataset](https://img.shields.io/badge/dataset-BIWI-brightgreen)
 ![dataset](https://img.shields.io/badge/dataset-AFLW-brightgreen)
@@ -33,9 +34,15 @@ pip install -r requirements.txt
 
 The dataset required to train our model must contain exactly one sample per every combination of Euler angles (yaw, pitch, and roll) for each identity. This is because our method relies on fully populating all entries of the tensor before decomposition. To meet this requirement, we rendered all desired combinations of Euler angles from 3D models in FaceScape for each identity using PyTorch3D.
 
-We provide a small subset of the our dataset, rendered from the samples that the Facescape authors have permitted to be published. This subset is intended to help you better understand the structure and format of our training and validation data. The provided dataset has already been rendered by us for the specified angle combinations and can be downloaded at:
+We provide a small subset of the our dataset, rendered from Facescape databasewhich the authors have permitted to be published. This subset is intended to help you better understand the structure and format of our training and validation data. The provided dataset has already been rendered by via **pytorch3D** for the specified angle combinations and can be accessed from the following Hugging Face Hub:
 
-[DOWNLOAD LINK]
+[Download rendered_mini_FaceScape_db.zip](https://huggingface.co/datasets/MahdiGhafourian/rendered_mini_FaceScape_db/resolve/main/rendered_mini_FaceScape_db.zip)
+
+After downloading, extract it into your project’s `data/` folder:
+
+```bash
+unzip rendered_mini_FaceScape_db.zip -d data/
+```
 
 For full-scale training, you will need to download the complete FaceScape dataset from the following address. You can then render one random 3D model per identity with your desired pose combinations.
 
