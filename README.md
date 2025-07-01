@@ -34,10 +34,10 @@ pip install -r requirements.txt
 
 The dataset required to train our model must contain exactly one sample per every combination of Euler angles (yaw, pitch, and roll) for each identity. This is because our method relies on fully populating all entries of the tensor before decomposition. To meet this requirement, we rendered all desired combinations of Euler angles from 3D models in FaceScape for each identity using PyTorch3D.
 
-We provide a small subset of the our dataset, rendered from Facescape databasewhich the authors have permitted to be published. This subset is intended to help you better understand the structure and format of our training and validation data. The provided dataset has already been rendered by via **pytorch3D** for the specified angle combinations and can be accessed from the following Hugging Face Hub:
+We provide a small subset of our dataset, consisting of images rendered from the FaceScape database. This subset includes only those identities that the original FaceScape authors have permitted to be publicly shared. The purpose of this subset is to help you better understand the structure and format of our training and validation data. The provided dataset has been pre-rendered using PyTorch3D for specific angle combinations and is available on the Hugging Face Hub at the following link:
 
-[Download rendered_mini_FaceScape_db.zip](https://huggingface.co/datasets/MahdiGhafourian/rendered_mini_FaceScape_db/resolve/main/rendered_mini_FaceScape_db.zip)
-
+[Download rendered_mini_FaceScape_db.zip](https://huggingface.co/datasets/MahdiGhafourian/rendered_mini_FaceScape_db/resolve/main/mini_Facescape_db.zip)
+					  
 After downloading, extract it into your project’s `data/` folder:
 
 ```bash
