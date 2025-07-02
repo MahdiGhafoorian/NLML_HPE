@@ -36,12 +36,12 @@ The dataset required to train our model must contain exactly one sample per ever
 
 We provide a small subset of our dataset, consisting of images rendered from the FaceScape database. This subset includes only those identities that the original FaceScape authors have permitted to be publicly shared. The purpose of this subset is to help you better understand the structure and format of our training and validation data. The provided dataset has been pre-rendered using PyTorch3D for specific angle combinations and is available on the Hugging Face Hub at the following link:
 
-[Download rendered_mini_FaceScape_db.zip](https://huggingface.co/datasets/MahdiGhafourian/rendered_mini_FaceScape_db/resolve/main/mini_Facescape_db.zip)
+[Download mini_FaceScape_db.zip](https://huggingface.co/datasets/MahdiGhafourian/rendered_mini_FaceScape_db/resolve/main/mini_Facescape_db.zip)
 					  
 After downloading, extract it into your project’s `data/` folder:
 
 ```bash
-unzip rendered_mini_FaceScape_db.zip -d data/
+unzip mini_FaceScape_db.zip -d data/
 ```
 
 For full-scale training, you will need to download the complete FaceScape dataset from the following address. You can then render one random 3D model per identity with your desired pose combinations.
