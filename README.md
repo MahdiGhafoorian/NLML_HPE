@@ -1,4 +1,3 @@
-
 # NLML_HPE: Head Pose Estimation with Limited Data via Manifold Learning
 
 
