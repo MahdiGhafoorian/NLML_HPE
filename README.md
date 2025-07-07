@@ -119,12 +119,15 @@ python NLML_HPE_Test.py
 We have two scripts for the inference. The first one, optimizes the cosine function with the (learned) optimized sinusoidal parameters from TD_main. This inference can be performed by calling TD_Inference. However, it is slow and time-consuming, the reason we trained an encoder plus three MLP heads to train a FFN that learn to do the same inference but in real-time. To do this, we provided NLML_HPE_Test to do the inference on the selected test set. You can use either scripts for the inference on the input image:
 
 ```sh
-python TD_Inference.py --image_path="{path to your image}"
-```
-or (better)
-```sh
 python NLML_HPE_Test.py
 ```
+
+or via optimizing Einsum:
+
+```sh
+python TD_Inference.py --image_path="{path to your image}"
+```
+
 You can use the following commands to run the demo:
 
 ```sh
