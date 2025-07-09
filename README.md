@@ -11,7 +11,9 @@ This repository is the official implementation of [NLML_HPE](https://github.com/
 ![dataset](https://img.shields.io/badge/dataset-300W_LP-brightgreen)
 ![Framework](https://img.shields.io/badge/Framework-PyTorch-orange)
 
+<!--
 Paper: [Arxiv](https://github.com/MahdiGhafoorian/NLML_HPE) | 
+-->
 
 ## Overview
 
