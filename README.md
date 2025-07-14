@@ -57,7 +57,6 @@ For the validation, follow the [6DRepnet](https://github.com/thohemp/6DRepNet) t
 
 Store them in the *datasets* directory.
 
-
 For 300W-LP and AFLW2000 we need to create a *filenamelist*. 
 ```
 python create_filename_list.py --root_dir datasets/300W_LP
