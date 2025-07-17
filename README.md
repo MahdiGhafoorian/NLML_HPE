@@ -167,6 +167,10 @@ We provide some results on AFLW2000 with models trained on 300W_LP. These models
 ## **Acknowledgement**
 Many thanks to the authors of [6DRepnet](https://github.com/thohemp/6DRepNet) and [TokenHPE](https://github.com/zc2023/TokenHPE). We reuse their code for data preprocessing and evaluation which greatly reduced redundant work.
 
+This project was funded by the European Union (GA 101119800 - EMERALD). Views and opinions expressed are however those of the author(s)
+only and do not necessarily reflect those of the European Union or the Agency. Neither the European Union nor the granting
+authority can be held responsible for them.
+
 <!--
 ## **Citation**
 
