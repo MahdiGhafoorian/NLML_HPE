@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NLML-HPE Real-Time Head Pose Estimation</title>
+    <style>
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: 40px;
+        font-family: Arial, sans-serif;
+    }
+
+    video, img {
+        border: 3px solid #333;
+        margin: 15px;
+	width: 720px;          
+        max-width: 95vw;
+        height: auto;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+
+    #status {
+        font-size: 1rem;
+        color: green;
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+
+<h2>NLML-HPE Real-Time Head Pose Estimation</h2>
+
+<!-- Live video preview from webcam -->
+<video id="video" autoplay playsinline muted style="visibility: hidden; position: absolute;"></video>
+
+<!-- Processed result returned from server -->
+<img id="output" />
+
+<p id="status">⏳ Initializing camera...</p>
+
+<script>
+const video = document.getElementById("video");
+const output = document.getElementById("output");
+const statusText = document.getElementById("status");
+
+async function initWebcam() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+        statusText.textContent = "✅ Camera ready. Streaming...";
+
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        setInterval(async () => {
+            // Resize canvas to match video dimensions
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            // Draw current frame to canvas
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Convert canvas to blob (JPEG)
+            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg'));
+
+            // Send frame to server
+            const formData = new FormData();
+            formData.append("file", blob, "frame.jpg");
+
+            try {
+                const response = await fetch("/predict_frame", {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const resultBlob = await response.blob();
+                    output.src = URL.createObjectURL(resultBlob);
+                } else {
+                    statusText.textContent = "⚠️ Server error while processing frame";
+                }
+            } catch (err) {
+                console.error("Request error:", err);
+                statusText.textContent = "❌ Network or server error";
+            }
+        }, 100); // Send ~10 frames per second
+    } catch (err) {
+        statusText.textContent = "❌ Could not access webcam";
+        console.error("Webcam error:", err);
+    }
+}
+
+initWebcam();
+</script>
+
+</body>
+</html>
