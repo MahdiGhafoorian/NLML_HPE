@@ -1,3 +1,5 @@
+fastapi
+uvicorn[standard]
 numpy
 mediapipe
 tensorly
