@@ -1,0 +1,9 @@
+# Ignore everything
+*
+
+# Allow only specific files
+!app/
+!helpers/FeatureExtractor.py
+!models/combined_model_scripted.pth
+!requirements.txt
+!Dockerfile
