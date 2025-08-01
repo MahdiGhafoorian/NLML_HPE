@@ -1,7 +1,7 @@
 # NLML_HPE: Head Pose Estimation with Limited Data via Manifold Learning
 
 
-This repository is the official implementation of [NLML_HPE](https://github.com/MahdiGhafoorian/NLML_HPE) head pose estimation method.
+This repository is the official implementation of [NLML_HPE](https://github.com/MahdiGhafoorian/NLML_HPE) head pose estimation method. This research is accepted for publication at the International Joint Conference on Biometrics (IJCB 2025).
 
 ![license](https://img.shields.io/badge/license-MIT-blue)
 [![Hugging Face Dataset](https://img.shields.io/badge/HuggingFace-Dataset-blue)](https://huggingface.co/datasets/MahdiGhafourian/rendered_mini_FaceScape_db)
